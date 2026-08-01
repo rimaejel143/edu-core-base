@@ -93,6 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Center Management System" },
+      { name: "twitter:description", content: "Internal administration platform for educational centers: students, teachers, subjects and reporting." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a59608d3-556f-4ceb-9415-4ad33084d688/id-preview-77c6f844--5249d0a2-a01b-4e51-a19c-1fa0e9a3edb8.lovable.app-1785574553406.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a59608d3-556f-4ceb-9415-4ad33084d688/id-preview-77c6f844--5249d0a2-a01b-4e51-a19c-1fa0e9a3edb8.lovable.app-1785574553406.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
