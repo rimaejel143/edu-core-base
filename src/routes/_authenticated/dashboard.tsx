@@ -23,9 +23,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import {
+  activityQuery,
   buildRegistrationSeries,
   buildStats,
   formatDate,
+  formatDateTime,
   fullName,
   studentsQuery,
   subjectsQuery,
