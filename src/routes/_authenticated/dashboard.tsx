@@ -48,10 +48,11 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function DashboardPage() {
-  const { centerId, profile } = useAuth();
-  const students = useQuery(studentsQuery(centerId));
-  const teachers = useQuery(teachersQuery(centerId));
-  const subjects = useQuery(subjectsQuery(centerId));
+  const { profile } = useAuth();
+  const students = useQuery(studentsQuery);
+  const teachers = useQuery(teachersQuery);
+  const subjects = useQuery(subjectsQuery);
+  const activity = useQuery(activityQuery);
 
   const isLoading = students.isLoading || teachers.isLoading || subjects.isLoading;
   const stats = buildStats(students.data ?? [], teachers.data ?? [], subjects.data ?? []);
