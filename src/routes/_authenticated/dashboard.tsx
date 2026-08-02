@@ -158,22 +158,22 @@ function DashboardPage() {
           <CardContent className="space-y-4 pt-0">
             {isLoading && <Skeleton className="h-40 w-full" />}
             {!isLoading &&
-              recent.slice(0, 5).map((student) => (
-                <div key={student.id} className="flex items-start gap-3">
+              (activity.data ?? []).slice(0, 5).map((entry) => (
+                <div key={entry.id} className="flex items-start gap-3">
                   <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
                     <Activity className="size-4" />
                   </span>
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">
-                      {fullName(student)} registered
+                      {entry.description ?? `${entry.entity_type} ${entry.action}`}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {student.student_code} · {formatDate(student.registration_date)}
+                      {entry.actor_name ?? "System"} · {formatDateTime(entry.created_at)}
                     </p>
                   </div>
                 </div>
               ))}
-            {!isLoading && recent.length === 0 && (
+            {!isLoading && (activity.data ?? []).length === 0 && (
               <p className="text-sm text-muted-foreground">No activity yet.</p>
             )}
           </CardContent>
