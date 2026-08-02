@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_name: string | null
+          center_id: string
+          created_at: string
+          description: string | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          center_id: string
+          created_at?: string
+          description?: string | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          center_id?: string
+          created_at?: string
+          description?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_log_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessments: {
         Row: {
           assessment_date: string
@@ -234,6 +278,47 @@ export type Database = {
         }
         Relationships: []
       }
+      grades: {
+        Row: {
+          center_id: string
+          created_at: string
+          description: string | null
+          id: string
+          level_order: number | null
+          name: string
+          status: Database["public"]["Enums"]["record_status"]
+          updated_at: string
+        }
+        Insert: {
+          center_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          level_order?: number | null
+          name: string
+          status?: Database["public"]["Enums"]["record_status"]
+          updated_at?: string
+        }
+        Update: {
+          center_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          level_order?: number | null
+          name?: string
+          status?: Database["public"]["Enums"]["record_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grades_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -420,6 +505,7 @@ export type Database = {
           center_id: string
           created_at: string
           enrolled_at: string
+          grade_id: string | null
           id: string
           status: Database["public"]["Enums"]["record_status"]
           student_id: string
@@ -431,6 +517,7 @@ export type Database = {
           center_id: string
           created_at?: string
           enrolled_at?: string
+          grade_id?: string | null
           id?: string
           status?: Database["public"]["Enums"]["record_status"]
           student_id: string
@@ -442,6 +529,7 @@ export type Database = {
           center_id?: string
           created_at?: string
           enrolled_at?: string
+          grade_id?: string | null
           id?: string
           status?: Database["public"]["Enums"]["record_status"]
           student_id?: string
@@ -455,6 +543,13 @@ export type Database = {
             columns: ["center_id"]
             isOneToOne: false
             referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_subjects_grade_id_fkey"
+            columns: ["grade_id"]
+            isOneToOne: false
+            referencedRelation: "grades"
             referencedColumns: ["id"]
           },
           {
@@ -488,6 +583,7 @@ export type Database = {
           email: string | null
           first_name: string
           gender: Database["public"]["Enums"]["gender_type"] | null
+          grade_id: string | null
           id: string
           last_name: string
           notes: string | null
@@ -508,6 +604,7 @@ export type Database = {
           email?: string | null
           first_name: string
           gender?: Database["public"]["Enums"]["gender_type"] | null
+          grade_id?: string | null
           id?: string
           last_name: string
           notes?: string | null
@@ -528,6 +625,7 @@ export type Database = {
           email?: string | null
           first_name?: string
           gender?: Database["public"]["Enums"]["gender_type"] | null
+          grade_id?: string | null
           id?: string
           last_name?: string
           notes?: string | null
@@ -547,6 +645,62 @@ export type Database = {
             columns: ["center_id"]
             isOneToOne: false
             referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "students_grade_id_fkey"
+            columns: ["grade_id"]
+            isOneToOne: false
+            referencedRelation: "grades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subject_grades: {
+        Row: {
+          center_id: string
+          created_at: string
+          grade_id: string
+          id: string
+          subject_id: string
+          updated_at: string
+        }
+        Insert: {
+          center_id: string
+          created_at?: string
+          grade_id: string
+          id?: string
+          subject_id: string
+          updated_at?: string
+        }
+        Update: {
+          center_id?: string
+          created_at?: string
+          grade_id?: string
+          id?: string
+          subject_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subject_grades_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subject_grades_grade_id_fkey"
+            columns: ["grade_id"]
+            isOneToOne: false
+            referencedRelation: "grades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subject_grades_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
             referencedColumns: ["id"]
           },
         ]
@@ -591,6 +745,65 @@ export type Database = {
             columns: ["center_id"]
             isOneToOne: false
             referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teacher_subjects: {
+        Row: {
+          center_id: string
+          created_at: string
+          grade_id: string | null
+          id: string
+          subject_id: string
+          teacher_id: string
+          updated_at: string
+        }
+        Insert: {
+          center_id: string
+          created_at?: string
+          grade_id?: string | null
+          id?: string
+          subject_id: string
+          teacher_id: string
+          updated_at?: string
+        }
+        Update: {
+          center_id?: string
+          created_at?: string
+          grade_id?: string | null
+          id?: string
+          subject_id?: string
+          teacher_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_subjects_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teacher_subjects_grade_id_fkey"
+            columns: ["grade_id"]
+            isOneToOne: false
+            referencedRelation: "grades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teacher_subjects_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teacher_subjects_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
             referencedColumns: ["id"]
           },
         ]
