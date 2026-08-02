@@ -11,12 +11,16 @@ export type Center = Tables<"centers">;
 export type Student = Tables<"students">;
 export type Teacher = Tables<"teachers">;
 export type Subject = Tables<"subjects">;
+export type Grade = Tables<"grades">;
+export type SubjectGrade = Tables<"subject_grades">;
+export type TeacherSubject = Tables<"teacher_subjects">;
 export type StudentSubject = Tables<"student_subjects">;
 export type ProgressRecord = Tables<"progress_records">;
 export type AttendanceRecord = Tables<"attendance">;
 export type Assessment = Tables<"assessments">;
 export type Report = Tables<"reports">;
 export type CenterSettings = Tables<"center_settings">;
+export type ActivityLog = Tables<"activity_log">;
 
 export interface DashboardStats {
   totalStudents: number;
