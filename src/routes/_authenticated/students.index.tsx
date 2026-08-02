@@ -336,7 +336,7 @@ function StudentsPage() {
                             }}
                             trigger={
                               <ActionItem
-                                variant="destructive"
+                                className="text-destructive focus:text-destructive"
                                 onSelect={(event) => event.preventDefault()}
                               >
                                 <Trash2 className="size-4" /> Delete
