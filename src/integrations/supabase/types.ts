@@ -242,70 +242,88 @@ export type Database = {
           city: string | null
           code: string
           country: string | null
+          cover_url: string | null
           created_at: string
+          description: string | null
           email: string | null
           id: string
+          logo_url: string | null
           name: string
           phone: string | null
           status: Database["public"]["Enums"]["record_status"]
           updated_at: string
+          website: string | null
         }
         Insert: {
           address?: string | null
           city?: string | null
           code: string
           country?: string | null
+          cover_url?: string | null
           created_at?: string
+          description?: string | null
           email?: string | null
           id?: string
+          logo_url?: string | null
           name: string
           phone?: string | null
           status?: Database["public"]["Enums"]["record_status"]
           updated_at?: string
+          website?: string | null
         }
         Update: {
           address?: string | null
           city?: string | null
           code?: string
           country?: string | null
+          cover_url?: string | null
           created_at?: string
+          description?: string | null
           email?: string | null
           id?: string
+          logo_url?: string | null
           name?: string
           phone?: string | null
           status?: Database["public"]["Enums"]["record_status"]
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
       grades: {
         Row: {
+          capacity: number | null
           center_id: string
           created_at: string
           description: string | null
           id: string
           level_order: number | null
           name: string
+          room: string | null
           status: Database["public"]["Enums"]["record_status"]
           updated_at: string
         }
         Insert: {
+          capacity?: number | null
           center_id: string
           created_at?: string
           description?: string | null
           id?: string
           level_order?: number | null
           name: string
+          room?: string | null
           status?: Database["public"]["Enums"]["record_status"]
           updated_at?: string
         }
         Update: {
+          capacity?: number | null
           center_id?: string
           created_at?: string
           description?: string | null
           id?: string
           level_order?: number | null
           name?: string
+          room?: string | null
           status?: Database["public"]["Enums"]["record_status"]
           updated_at?: string
         }
@@ -577,10 +595,13 @@ export type Database = {
       }
       students: {
         Row: {
+          address: string | null
           center_id: string
           created_at: string
           date_of_birth: string | null
           email: string | null
+          emergency_contact: string | null
+          emergency_phone: string | null
           first_name: string
           gender: Database["public"]["Enums"]["gender_type"] | null
           grade_id: string | null
@@ -590,6 +611,7 @@ export type Database = {
           parent_name: string | null
           parent_phone: string | null
           phone: string | null
+          photo_url: string | null
           registration_date: string
           school: string | null
           school_grade: string | null
@@ -598,10 +620,13 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          address?: string | null
           center_id: string
           created_at?: string
           date_of_birth?: string | null
           email?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
           first_name: string
           gender?: Database["public"]["Enums"]["gender_type"] | null
           grade_id?: string | null
@@ -611,6 +636,7 @@ export type Database = {
           parent_name?: string | null
           parent_phone?: string | null
           phone?: string | null
+          photo_url?: string | null
           registration_date?: string
           school?: string | null
           school_grade?: string | null
@@ -619,10 +645,13 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          address?: string | null
           center_id?: string
           created_at?: string
           date_of_birth?: string | null
           email?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
           first_name?: string
           gender?: Database["public"]["Enums"]["gender_type"] | null
           grade_id?: string | null
@@ -632,6 +661,7 @@ export type Database = {
           parent_name?: string | null
           parent_phone?: string | null
           phone?: string | null
+          photo_url?: string | null
           registration_date?: string
           school?: string | null
           school_grade?: string | null
@@ -810,6 +840,7 @@ export type Database = {
       }
       teachers: {
         Row: {
+          address: string | null
           center_id: string
           created_at: string
           email: string | null
@@ -820,11 +851,14 @@ export type Database = {
           last_name: string
           notes: string | null
           phone: string | null
+          photo_url: string | null
           specialization: string | null
           status: Database["public"]["Enums"]["record_status"]
+          teacher_code: string | null
           updated_at: string
         }
         Insert: {
+          address?: string | null
           center_id: string
           created_at?: string
           email?: string | null
@@ -835,11 +869,14 @@ export type Database = {
           last_name: string
           notes?: string | null
           phone?: string | null
+          photo_url?: string | null
           specialization?: string | null
           status?: Database["public"]["Enums"]["record_status"]
+          teacher_code?: string | null
           updated_at?: string
         }
         Update: {
+          address?: string | null
           center_id?: string
           created_at?: string
           email?: string | null
@@ -850,8 +887,10 @@ export type Database = {
           last_name?: string
           notes?: string | null
           phone?: string | null
+          photo_url?: string | null
           specialization?: string | null
           status?: Database["public"]["Enums"]["record_status"]
+          teacher_code?: string | null
           updated_at?: string
         }
         Relationships: [
