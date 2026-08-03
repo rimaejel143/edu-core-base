@@ -3,12 +3,16 @@ import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type {
   ActivityLog,
+  AppRole,
   Assessment,
+  AttendanceRecord,
   Center,
   DashboardStats,
   Grade,
   Profile,
+  ProgressRecord,
   RegistrationPoint,
+  Report as CenterReport,
   Student,
   StudentSubject,
   Subject,
@@ -124,6 +128,44 @@ export const activityQuery = queryOptions({
         .limit(20),
     ),
 });
+
+export const attendanceQuery = queryOptions({
+  queryKey: ["attendance"],
+  queryFn: async (): Promise<AttendanceRecord[]> =>
+    unwrap(
+      await supabase
+        .from("attendance")
+        .select("*")
+        .order("session_date", { ascending: false })
+        .limit(2000),
+    ),
+});
+
+export const progressQuery = queryOptions({
+  queryKey: ["progress_records"],
+  queryFn: async (): Promise<ProgressRecord[]> =>
+    unwrap(
+      await supabase
+        .from("progress_records")
+        .select("*")
+        .order("record_date", { ascending: false }),
+    ),
+});
+
+export const reportsQuery = queryOptions({
+  queryKey: ["reports"],
+  queryFn: async (): Promise<CenterReport[]> =>
+    unwrap(
+      await supabase.from("reports").select("*").order("created_at", { ascending: false }),
+    ),
+});
+
+export const userRolesQuery = queryOptions({
+  queryKey: ["user_roles"],
+  queryFn: async (): Promise<{ user_id: string; role: AppRole }[]> =>
+    unwrap(await supabase.from("user_roles").select("user_id, role")),
+});
+
 
 export const centerQuery = (centerId: string | null) =>
   queryOptions({
