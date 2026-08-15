@@ -36,6 +36,28 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+/** Audit trail entry for authentication events (login, logout, password reset). */
+async function logAuthEvent(action: string, description: string) {
+  const { data } = await supabase.auth.getUser();
+  const authUser = data.user;
+  if (!authUser) return;
+  const { data: profileRow } = await supabase
+    .from("profiles")
+    .select("center_id, full_name")
+    .eq("id", authUser.id)
+    .maybeSingle();
+  if (!profileRow?.center_id) return;
+  await supabase.from("activity_log").insert({
+    center_id: profileRow.center_id,
+    actor_id: authUser.id,
+    actor_name: profileRow.full_name || authUser.email || null,
+    action,
+    entity_type: "Authentication",
+    entity_id: null,
+    description,
+  });
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -102,6 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       signIn: async (email, password) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (!error) void logAuthEvent("login", `${email} signed in`);
         return { error: error?.message ?? null };
       },
       signUp: async (email, password, fullName) => {
@@ -119,6 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
         });
+        if (!error) void logAuthEvent("password_reset", `Password reset requested for ${email}`);
         return { error: error?.message ?? null };
       },
       updatePassword: async (password) => {
@@ -126,6 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: error?.message ?? null };
       },
       signOut: async () => {
+        await logAuthEvent("logout", `${session?.user?.email ?? "A user"} signed out`);
         await supabase.auth.signOut();
       },
     };
