@@ -210,15 +210,15 @@ function TeacherDetailPage() {
         <StatCard
           label="Average student score"
           value={average ?? "—"}
-          hint={rate === null ? undefined : `${rate}% attendance`}
+          hint={`${rate ?? 0}% attendance`}
           icon={LineChart}
         />
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
-        <StatCard label="New students (7 days)" value={countSince(enrolments, 7)} />
-        <StatCard label="New students (30 days)" value={countSince(enrolments, 30)} />
-        <StatCard label="New students (365 days)" value={countSince(enrolments, 365)} />
+        <StatCard label="New students (7 days)" value={countSince(enrolments, 7)} icon={Users} />
+        <StatCard label="New students (30 days)" value={countSince(enrolments, 30)} icon={Users} />
+        <StatCard label="New students (365 days)" value={countSince(enrolments, 365)} icon={Users} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
