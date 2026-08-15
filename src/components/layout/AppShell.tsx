@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, User as UserIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { LogOut, Search, User as UserIcon } from "lucide-react";
+import { useState, type FormEvent, type ReactNode } from "react";
 
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { initials } from "@/lib/api";
@@ -22,6 +23,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { profile, user, isSuperAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [term, setTerm] = useState("");
+
+  function handleSearch(event: FormEvent) {
+    event.preventDefault();
+    void navigate({ to: "/search", search: { q: term.trim() } });
+  }
 
   const displayName = profile?.full_name?.trim() || user?.email || "Account";
 
@@ -45,6 +52,21 @@ export function AppShell({ children }: { children: ReactNode }) {
                 {profile?.center_id ? "Center workspace" : "No center assigned"}
               </span>
             </div>
+
+            <form onSubmit={handleSearch} className="relative mx-2 hidden max-w-sm flex-1 md:block">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={term}
+                onChange={(event) => setTerm(event.target.value)}
+                placeholder={
+                  isSuperAdmin
+                    ? "Search centers, students, teachers…"
+                    : "Search students, teachers, classes…"
+                }
+                className="h-9 pl-9"
+                aria-label="Global search"
+              />
+            </form>
 
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="hidden sm:inline-flex">

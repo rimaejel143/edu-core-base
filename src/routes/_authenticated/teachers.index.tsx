@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { BookOpen, Pencil, Plus, Trash2 } from "lucide-react";
+import { BookOpen, Eye, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { EmptyState, PageHeader } from "@/components/common/DataDisplay";
 import {
@@ -254,7 +254,15 @@ function TeachersPage() {
                 <TableBody>
                   {(teachers.data ?? []).map((teacher) => (
                     <TableRow key={teacher.id}>
-                      <TableCell className="font-medium">{fullName(teacher)}</TableCell>
+                      <TableCell className="font-medium">
+                        <Link
+                          to="/teachers/$teacherId"
+                          params={{ teacherId: teacher.id }}
+                          className="hover:underline"
+                        >
+                          {fullName(teacher)}
+                        </Link>
+                      </TableCell>
                       <TableCell className="hidden md:table-cell">
                         {teacher.specialization ?? "—"}
                       </TableCell>
@@ -277,6 +285,11 @@ function TeachersPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <RowActions>
+                          <ActionItem asChild>
+                            <Link to="/teachers/$teacherId" params={{ teacherId: teacher.id }}>
+                              <Eye className="size-4" /> View profile
+                            </Link>
+                          </ActionItem>
                           <ActionItem onSelect={() => openEdit(teacher)}>
                             <Pencil className="size-4" /> Edit
                           </ActionItem>

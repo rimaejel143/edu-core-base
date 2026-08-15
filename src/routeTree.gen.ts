@@ -21,6 +21,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSubjectsRouteImport } from './routes/_authenticated/subjects'
 import { Route as AuthenticatedCentersIndexRouteImport } from './routes/_authenticated/centers.index'
 import { Route as AuthenticatedCentersCenterIdRouteImport } from './routes/_authenticated/centers.$centerId'
+import { Route as AuthenticatedClassesGradeIdRouteImport } from './routes/_authenticated/classes.$gradeId'
 import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authenticated/students.index'
 import { Route as AuthenticatedStudentsStudentIdRouteImport } from './routes/_authenticated/students.$studentId'
 import { Route as AuthenticatedTeachersIndexRouteImport } from './routes/_authenticated/teachers.index'
@@ -87,6 +88,12 @@ const AuthenticatedCentersCenterIdRoute =
     path: '/centers/$centerId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedClassesGradeIdRoute =
+  AuthenticatedClassesGradeIdRouteImport.update({
+    id: '/classes/$gradeId',
+    path: '/classes/$gradeId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedStudentsIndexRoute =
   AuthenticatedStudentsIndexRouteImport.update({
     id: '/students/',
@@ -123,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/subjects': typeof AuthenticatedSubjectsRoute
   '/centers/$centerId': typeof AuthenticatedCentersCenterIdRoute
+  '/classes/$gradeId': typeof AuthenticatedClassesGradeIdRoute
   '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/centers/': typeof AuthenticatedCentersIndexRoute
@@ -140,6 +148,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/subjects': typeof AuthenticatedSubjectsRoute
   '/centers/$centerId': typeof AuthenticatedCentersCenterIdRoute
+  '/classes/$gradeId': typeof AuthenticatedClassesGradeIdRoute
   '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/centers': typeof AuthenticatedCentersIndexRoute
@@ -159,6 +168,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/subjects': typeof AuthenticatedSubjectsRoute
   '/_authenticated/centers/$centerId': typeof AuthenticatedCentersCenterIdRoute
+  '/_authenticated/classes/$gradeId': typeof AuthenticatedClassesGradeIdRoute
   '/_authenticated/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/_authenticated/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/_authenticated/centers/': typeof AuthenticatedCentersIndexRoute
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/subjects'
     | '/centers/$centerId'
+    | '/classes/$gradeId'
     | '/students/$studentId'
     | '/teachers/$teacherId'
     | '/centers/'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/subjects'
     | '/centers/$centerId'
+    | '/classes/$gradeId'
     | '/students/$studentId'
     | '/teachers/$teacherId'
     | '/centers'
@@ -213,6 +225,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/subjects'
     | '/_authenticated/centers/$centerId'
+    | '/_authenticated/classes/$gradeId'
     | '/_authenticated/students/$studentId'
     | '/_authenticated/teachers/$teacherId'
     | '/_authenticated/centers/'
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCentersCenterIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/classes/$gradeId': {
+      id: '/_authenticated/classes/$gradeId'
+      path: '/classes/$gradeId'
+      fullPath: '/classes/$gradeId'
+      preLoaderRoute: typeof AuthenticatedClassesGradeIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/students/': {
       id: '/_authenticated/students/'
       path: '/students'
@@ -352,6 +372,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSubjectsRoute: typeof AuthenticatedSubjectsRoute
   AuthenticatedCentersCenterIdRoute: typeof AuthenticatedCentersCenterIdRoute
+  AuthenticatedClassesGradeIdRoute: typeof AuthenticatedClassesGradeIdRoute
   AuthenticatedStudentsStudentIdRoute: typeof AuthenticatedStudentsStudentIdRoute
   AuthenticatedTeachersTeacherIdRoute: typeof AuthenticatedTeachersTeacherIdRoute
   AuthenticatedCentersIndexRoute: typeof AuthenticatedCentersIndexRoute
@@ -367,6 +388,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSubjectsRoute: AuthenticatedSubjectsRoute,
   AuthenticatedCentersCenterIdRoute: AuthenticatedCentersCenterIdRoute,
+  AuthenticatedClassesGradeIdRoute: AuthenticatedClassesGradeIdRoute,
   AuthenticatedStudentsStudentIdRoute: AuthenticatedStudentsStudentIdRoute,
   AuthenticatedTeachersTeacherIdRoute: AuthenticatedTeachersTeacherIdRoute,
   AuthenticatedCentersIndexRoute: AuthenticatedCentersIndexRoute,
