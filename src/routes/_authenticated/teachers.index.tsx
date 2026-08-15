@@ -41,7 +41,7 @@ import {
 import { useCrud } from "@/lib/crud";
 import type { RecordStatus, Teacher } from "@/lib/types";
 
-export const Route = createFileRoute("/_authenticated/teachers")({
+export const Route = createFileRoute("/_authenticated/teachers/")({
   head: () => ({
     meta: [
       { title: "Teachers — Center Management System" },
