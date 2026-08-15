@@ -4,6 +4,7 @@ import {
   GraduationCap,
   LayoutDashboard,
   LineChart,
+  Search,
   Settings,
   ShieldCheck,
   Users,
@@ -26,6 +27,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const NAV_ITEMS = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Search", url: "/search", icon: Search },
   { title: "Students", url: "/students", icon: Users },
   { title: "Teachers", url: "/teachers", icon: GraduationCap },
   { title: "Subjects", url: "/subjects", icon: BookOpen },
