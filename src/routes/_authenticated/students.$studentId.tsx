@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import {
   assessmentsQuery,
   averageScore,
@@ -31,12 +32,16 @@ import {
   formatDate,
   fullName,
   gradesQuery,
+  formatDateTime,
+  studentDocumentsQuery,
+  studentNotesQuery,
   studentQuery,
   studentSubjectsQuery,
   subjectsQuery,
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
-import { BookOpen, GraduationCap, LineChart } from "lucide-react";
+import { BookOpen, FileText, GraduationCap, LineChart, StickyNote } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/_authenticated/students/$studentId")({
   head: () => ({
@@ -72,8 +77,18 @@ function StudentDetailPage() {
   const assessments = useQuery(assessmentsQuery);
   const enrolCrud = useCrud("student_subjects", "Enrolment");
 
+  const notes = useQuery(studentNotesQuery);
+  const documents = useQuery(studentDocumentsQuery);
+  const noteCrud = useCrud("student_notes", "Note");
+  const documentCrud = useCrud("student_documents", "Document");
+  const { user, profile } = useAuth();
+
   const [open, setOpen] = useState(false);
   const [subjectId, setSubjectId] = useState("");
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteForm, setNoteForm] = useState({ note_type: "teacher", title: "", body: "" });
+  const [docOpen, setDocOpen] = useState(false);
+  const [docForm, setDocForm] = useState({ name: "", doc_type: "", file_path: "" });
 
   const record = student.data;
   const myEnrolments = useMemo(
@@ -83,6 +98,15 @@ function StudentDetailPage() {
   const myAssessments = useMemo(
     () => (assessments.data ?? []).filter((row) => row.student_id === studentId),
     [assessments.data, studentId],
+  );
+
+  const myNotes = useMemo(
+    () => (notes.data ?? []).filter((row) => row.student_id === studentId),
+    [notes.data, studentId],
+  );
+  const myDocuments = useMemo(
+    () => (documents.data ?? []).filter((row) => row.student_id === studentId),
+    [documents.data, studentId],
   );
 
   const subjectName = (id: string | null) =>
@@ -116,6 +140,46 @@ function StudentDetailPage() {
     if (ok) {
       setSubjectId("");
       setOpen(false);
+    }
+  };
+
+  const addNote = async () => {
+    if (!noteForm.title.trim()) return;
+    const ok = await noteCrud.create(
+      {
+        center_id: record.center_id,
+        student_id: record.id,
+        note_type: noteForm.note_type,
+        title: noteForm.title.trim(),
+        body: noteForm.body.trim() || null,
+        author_id: user?.id ?? null,
+        author_name: profile?.full_name ?? null,
+      },
+      `Note added for ${fullName(record)}`,
+    );
+    if (ok) {
+      setNoteForm({ note_type: "teacher", title: "", body: "" });
+      setNoteOpen(false);
+    }
+  };
+
+  const addDocument = async () => {
+    if (!docForm.name.trim()) return;
+    const ok = await documentCrud.create(
+      {
+        center_id: record.center_id,
+        student_id: record.id,
+        name: docForm.name.trim(),
+        doc_type: docForm.doc_type.trim() || null,
+        file_path: docForm.file_path.trim() || null,
+        uploaded_by: user?.id ?? null,
+        uploaded_by_name: profile?.full_name ?? null,
+      },
+      `Document added for ${fullName(record)}`,
+    );
+    if (ok) {
+      setDocForm({ name: "", doc_type: "", file_path: "" });
+      setDocOpen(false);
     }
   };
 
@@ -245,6 +309,177 @@ function StudentDetailPage() {
           </Card>
         </div>
       </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <StickyNote className="size-4" /> Notes
+            </CardTitle>
+            <Button size="sm" variant="outline" onClick={() => setNoteOpen(true)}>
+              <Plus className="size-4" /> Add note
+            </Button>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {myNotes.length === 0 ? (
+              <p className="py-4 text-sm text-muted-foreground">No teacher or admin notes yet.</p>
+            ) : (
+              <div className="divide-y divide-border">
+                {myNotes.map((note) => (
+                  <div key={note.id} className="flex items-start justify-between gap-3 py-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium">{note.title}</p>
+                        <Badge variant="secondary" className="capitalize">
+                          {note.note_type}
+                        </Badge>
+                      </div>
+                      {note.body && (
+                        <p className="mt-1 text-sm text-muted-foreground">{note.body}</p>
+                      )}
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {note.author_name ?? "Staff"} · {formatDateTime(note.created_at)}
+                      </p>
+                    </div>
+                    <ConfirmDelete
+                      title="Delete note?"
+                      description={`"${note.title}" will be permanently removed.`}
+                      onConfirm={() => {
+                        void noteCrud.remove(note.id, note.center_id, `Note "${note.title}" deleted`);
+                      }}
+                      trigger={
+                        <Button variant="ghost" size="icon" className="size-8">
+                          <Trash2 className="size-4 text-destructive" />
+                        </Button>
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <FileText className="size-4" /> Documents
+            </CardTitle>
+            <Button size="sm" variant="outline" onClick={() => setDocOpen(true)}>
+              <Plus className="size-4" /> Add document
+            </Button>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {myDocuments.length === 0 ? (
+              <p className="py-4 text-sm text-muted-foreground">No documents recorded yet.</p>
+            ) : (
+              <div className="divide-y divide-border">
+                {myDocuments.map((doc) => (
+                  <div key={doc.id} className="flex items-start justify-between gap-3 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{doc.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {doc.doc_type ?? "File"} · {doc.uploaded_by_name ?? "Staff"} ·{" "}
+                        {formatDateTime(doc.created_at)}
+                      </p>
+                    </div>
+                    <ConfirmDelete
+                      title="Delete document?"
+                      description={`"${doc.name}" will be permanently removed.`}
+                      onConfirm={() => {
+                        void documentCrud.remove(
+                          doc.id,
+                          doc.center_id,
+                          `Document "${doc.name}" deleted`,
+                        );
+                      }}
+                      trigger={
+                        <Button variant="ghost" size="icon" className="size-8">
+                          <Trash2 className="size-4 text-destructive" />
+                        </Button>
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <FormDialog
+        open={noteOpen}
+        onOpenChange={setNoteOpen}
+        title="Add note"
+        submitLabel="Save note"
+        pending={noteCrud.pending}
+        onSubmit={addNote}
+      >
+        <FieldGrid>
+          <Field label="Note type">
+            <SelectField
+              value={noteForm.note_type}
+              onChange={(value) => setNoteForm((prev) => ({ ...prev, note_type: value }))}
+              placeholder="Select type"
+              options={[
+                { value: "teacher", label: "Teacher note" },
+                { value: "admin", label: "Admin note" },
+              ]}
+            />
+          </Field>
+          <Field label="Title">
+            <Input
+              value={noteForm.title}
+              onChange={(event) =>
+                setNoteForm((prev) => ({ ...prev, title: event.target.value }))
+              }
+            />
+          </Field>
+        </FieldGrid>
+        <Field label="Details">
+          <Textarea
+            value={noteForm.body}
+            rows={4}
+            onChange={(event) => setNoteForm((prev) => ({ ...prev, body: event.target.value }))}
+          />
+        </Field>
+      </FormDialog>
+
+      <FormDialog
+        open={docOpen}
+        onOpenChange={setDocOpen}
+        title="Add document"
+        submitLabel="Save document"
+        pending={documentCrud.pending}
+        onSubmit={addDocument}
+      >
+        <FieldGrid>
+          <Field label="Document name">
+            <Input
+              value={docForm.name}
+              onChange={(event) => setDocForm((prev) => ({ ...prev, name: event.target.value }))}
+            />
+          </Field>
+          <Field label="Type">
+            <Input
+              value={docForm.doc_type}
+              placeholder="ID copy, certificate…"
+              onChange={(event) =>
+                setDocForm((prev) => ({ ...prev, doc_type: event.target.value }))
+              }
+            />
+          </Field>
+        </FieldGrid>
+        <Field label="File reference / link">
+          <Input
+            value={docForm.file_path}
+            placeholder="Storage path or URL"
+            onChange={(event) =>
+              setDocForm((prev) => ({ ...prev, file_path: event.target.value }))
+            }
+          />
+        </Field>
+      </FormDialog>
 
       <FormDialog
         open={open}
