@@ -14,6 +14,8 @@ import type {
   RegistrationPoint,
   Report as CenterReport,
   Student,
+  StudentDocument,
+  StudentNote,
   StudentSubject,
   Subject,
   SubjectGrade,
@@ -278,4 +280,67 @@ export function averageScore(records: { score: number | null; max_score: number 
   if (valid.length === 0) return null;
   const total = valid.reduce((sum, r) => sum + Number(r.score), 0);
   return Math.round((total / valid.length) * 10) / 10;
+}
+
+export const studentNotesQuery = queryOptions({
+  queryKey: ["student_notes"],
+  queryFn: async (): Promise<StudentNote[]> =>
+    unwrap(
+      await supabase.from("student_notes").select("*").order("created_at", { ascending: false }),
+    ),
+});
+
+export const studentDocumentsQuery = queryOptions({
+  queryKey: ["student_documents"],
+  queryFn: async (): Promise<StudentDocument[]> =>
+    unwrap(
+      await supabase
+        .from("student_documents")
+        .select("*")
+        .order("created_at", { ascending: false }),
+    ),
+});
+
+/** Percentage of attendance records marked present or late. */
+export function attendanceRate(records: { status: string }[]): number | null {
+  if (records.length === 0) return null;
+  const attended = records.filter((r) => r.status === "present" || r.status === "late").length;
+  return Math.round((attended / records.length) * 1000) / 10;
+}
+
+/** Monthly buckets (label + value) for any dated + scored record set. */
+export function monthlySeries<T>(
+  rows: T[],
+  getDate: (row: T) => string | null,
+  getValue: (row: T) => number | null,
+  months = 6,
+): { month: string; value: number }[] {
+  const now = new Date();
+  const series: { month: string; value: number }[] = [];
+  for (let offset = months - 1; offset >= 0; offset -= 1) {
+    const date = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+    const label = `${MONTH_LABELS[date.getMonth()]} ${String(date.getFullYear()).slice(2)}`;
+    const bucket = rows.filter((row) => {
+      const raw = getDate(row);
+      if (!raw) return false;
+      const parsed = new Date(raw);
+      return (
+        parsed.getFullYear() === date.getFullYear() && parsed.getMonth() === date.getMonth()
+      );
+    });
+    const values = bucket.map(getValue).filter((v): v is number => v !== null);
+    const value =
+      values.length === 0
+        ? 0
+        : Math.round((values.reduce((sum, v) => sum + v, 0) / values.length) * 10) / 10;
+    series.push({ month: label, value });
+  }
+  return series;
+}
+
+/** Count of rows created within the last N days. */
+export function countSince(rows: { created_at: string }[], days: number): number {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  return rows.filter((row) => new Date(row.created_at) >= cutoff).length;
 }

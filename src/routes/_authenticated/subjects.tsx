@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Layers, Pencil, Plus, Trash2 } from "lucide-react";
@@ -247,7 +247,13 @@ function SubjectsPage() {
                   className="flex items-start justify-between gap-3 rounded-lg border border-border p-4"
                 >
                   <div className="min-w-0">
-                    <p className="font-display text-sm font-semibold">{grade.name}</p>
+                    <Link
+                      to="/classes/$gradeId"
+                      params={{ gradeId: grade.id }}
+                      className="font-display text-sm font-semibold hover:underline"
+                    >
+                      {grade.name}
+                    </Link>
                     <p className="text-xs text-muted-foreground">
                       {centerName(grade.center_id)} · {studentsInGrade(grade.id)} students
                     </p>

@@ -33,3 +33,6 @@ export interface RegistrationPoint {
   month: string;
   students: number;
 }
+
+export type StudentNote = Tables<"student_notes">;
+export type StudentDocument = Tables<"student_documents">;
