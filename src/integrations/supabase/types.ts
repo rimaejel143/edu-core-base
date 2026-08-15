@@ -518,6 +518,117 @@ export type Database = {
           },
         ]
       }
+      student_documents: {
+        Row: {
+          center_id: string
+          created_at: string
+          doc_type: string | null
+          file_path: string | null
+          file_size: number | null
+          id: string
+          name: string
+          student_id: string
+          updated_at: string
+          uploaded_by: string | null
+          uploaded_by_name: string | null
+        }
+        Insert: {
+          center_id: string
+          created_at?: string
+          doc_type?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          name: string
+          student_id: string
+          updated_at?: string
+          uploaded_by?: string | null
+          uploaded_by_name?: string | null
+        }
+        Update: {
+          center_id?: string
+          created_at?: string
+          doc_type?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          name?: string
+          student_id?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          uploaded_by_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_documents_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_documents_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_notes: {
+        Row: {
+          author_id: string | null
+          author_name: string | null
+          body: string | null
+          center_id: string
+          created_at: string
+          id: string
+          note_type: string
+          student_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string | null
+          body?: string | null
+          center_id: string
+          created_at?: string
+          id?: string
+          note_type?: string
+          student_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string | null
+          body?: string | null
+          center_id?: string
+          created_at?: string
+          id?: string
+          note_type?: string
+          student_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_notes_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_notes_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_subjects: {
         Row: {
           center_id: string
