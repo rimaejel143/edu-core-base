@@ -51,7 +51,7 @@ import {
 import { useCrud } from "@/lib/crud";
 import type { Assessment, AttendanceStatus } from "@/lib/types";
 
-export const Route = createFileRoute("/_authenticated/progress")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/progress")({
   head: () => ({
     meta: [
       { title: "Progress — Center Management System" },

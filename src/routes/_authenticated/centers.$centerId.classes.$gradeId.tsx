@@ -42,7 +42,7 @@ import { useScopeId } from "@/hooks/useCenterScope";
   teachersQuery,
 } from "@/lib/api";
 
-export const Route = createFileRoute("/_authenticated/classes/$gradeId")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/classes/$gradeId")({
   head: () => ({
     meta: [
       { title: "Class overview — Center Management System" },
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/classes/$gradeId")({
 });
 
 function ClassDetailPage() {
-  const { gradeId } = useParams({ from: "/_authenticated/classes/$gradeId" });
+  const { gradeId } = useParams({ from: "/_authenticated/centers/$centerId/classes/$gradeId" });
   const scopeId = useScopeId();
   const grades = useQuery(gradesQuery(scopeId));
   const centers = useQuery(centersQuery(scopeId));
@@ -137,7 +137,7 @@ function ClassDetailPage() {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link to="/subjects">
+        <Link to="/centers/$centerId/subjects">
           <ArrowLeft className="size-4" /> Back to subjects & classes
         </Link>
       </Button>
@@ -246,7 +246,7 @@ function ClassDetailPage() {
                     <TableRow key={student.id}>
                       <TableCell className="font-medium">
                         <Link
-                          to="/students/$studentId"
+                          to="/centers/$centerId/students/$studentId"
                           params={{ studentId: student.id }}
                           className="hover:underline"
                         >
@@ -293,7 +293,7 @@ function ClassDetailPage() {
               {classTeachers.map((teacher) => (
                 <Link
                   key={teacher.id}
-                  to="/teachers/$teacherId"
+                  to="/centers/$centerId/teachers/$teacherId"
                   params={{ teacherId: teacher.id }}
                   className="rounded-lg border border-border p-4 transition-colors hover:bg-muted/60"
                 >

@@ -33,7 +33,7 @@ import {
 import { useCrud } from "@/lib/crud";
 import type { Grade, RecordStatus, Subject } from "@/lib/types";
 
-export const Route = createFileRoute("/_authenticated/subjects")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/subjects")({
   head: () => ({
     meta: [
       { title: "Subjects & Grades — Center Management System" },
@@ -250,7 +250,7 @@ function SubjectsPage() {
                 >
                   <div className="min-w-0">
                     <Link
-                      to="/classes/$gradeId"
+                      to="/centers/$centerId/classes/$gradeId"
                       params={{ gradeId: grade.id }}
                       className="font-display text-sm font-semibold hover:underline"
                     >

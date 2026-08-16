@@ -44,7 +44,7 @@ import { BookOpen, FileText, GraduationCap, LineChart, StickyNote } from "lucide
 import { useAuth } from "@/hooks/useAuth";
 import { useScopeId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/students/$studentId")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/students/$studentId")({
   head: () => ({
     meta: [
       { title: "Student details — Center Management System" },
@@ -69,7 +69,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 }
 
 function StudentDetailPage() {
-  const { studentId } = useParams({ from: "/_authenticated/students/$studentId" });
+  const { studentId } = useParams({ from: "/_authenticated/centers/$centerId/students/$studentId" });
   const scopeId = useScopeId();
   const student = useQuery(studentQuery(studentId));
   const subjects = useQuery(subjectsQuery(scopeId));
@@ -188,7 +188,7 @@ function StudentDetailPage() {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link to="/students">
+        <Link to="/centers/$centerId/students">
           <ArrowLeft className="size-4" /> Back to students
         </Link>
       </Button>

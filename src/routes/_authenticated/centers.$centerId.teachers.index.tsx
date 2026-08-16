@@ -42,7 +42,7 @@ import {
 import { useCrud } from "@/lib/crud";
 import type { RecordStatus, Teacher } from "@/lib/types";
 
-export const Route = createFileRoute("/_authenticated/teachers/")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/teachers/")({
   head: () => ({
     meta: [
       { title: "Teachers — Center Management System" },
@@ -258,7 +258,7 @@ function TeachersPage() {
                     <TableRow key={teacher.id}>
                       <TableCell className="font-medium">
                         <Link
-                          to="/teachers/$teacherId"
+                          to="/centers/$centerId/teachers/$teacherId"
                           params={{ teacherId: teacher.id }}
                           className="hover:underline"
                         >
@@ -288,7 +288,7 @@ function TeachersPage() {
                       <TableCell className="text-right">
                         <RowActions>
                           <ActionItem asChild>
-                            <Link to="/teachers/$teacherId" params={{ teacherId: teacher.id }}>
+                            <Link to="/centers/$centerId/teachers/$teacherId" params={{ teacherId: teacher.id }}>
                               <Eye className="size-4" /> View profile
                             </Link>
                           </ActionItem>

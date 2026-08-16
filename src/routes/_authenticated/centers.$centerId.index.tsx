@@ -52,7 +52,7 @@ import { useScopeId } from "@/hooks/useCenterScope";
   teachersQuery,
 } from "@/lib/api";
 
-export const Route = createFileRoute("/_authenticated/centers/$centerId")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/")({
   head: () => ({
     meta: [
       { title: "Center profile — Center Management System" },
@@ -68,7 +68,7 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId")({
 });
 
 function CenterProfilePage() {
-  const { centerId } = useParams({ from: "/_authenticated/centers/$centerId" });
+  const { centerId } = useParams({ from: "/_authenticated/centers/$centerId/" });
 
   const scopeId = useScopeId();
   const centers = useQuery(centersQuery(scopeId));
@@ -257,7 +257,7 @@ function CenterProfilePage() {
                           </TableCell>
                           <TableCell className="font-medium">
                             <Link
-                              to="/students/$studentId"
+                              to="/centers/$centerId/students/$studentId"
                               params={{ studentId: student.id }}
                               className="hover:underline"
                             >

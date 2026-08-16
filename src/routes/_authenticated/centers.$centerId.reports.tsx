@@ -41,7 +41,7 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 
-export const Route = createFileRoute("/_authenticated/reports")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/reports")({
   head: () => ({
     meta: [
       { title: "Reports — Center Management System" },
