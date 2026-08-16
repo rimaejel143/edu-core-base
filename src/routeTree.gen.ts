@@ -21,6 +21,7 @@ import { Route as AuthenticatedCentersCenterIdRouteRouteImport } from './routes/
 import { Route as AuthenticatedCentersCenterIdIndexRouteImport } from './routes/_authenticated/centers.$centerId.index'
 import { Route as AuthenticatedCentersCenterIdProgressRouteImport } from './routes/_authenticated/centers.$centerId.progress'
 import { Route as AuthenticatedCentersCenterIdReportsRouteImport } from './routes/_authenticated/centers.$centerId.reports'
+import { Route as AuthenticatedCentersCenterIdSearchRouteImport } from './routes/_authenticated/centers.$centerId.search'
 import { Route as AuthenticatedCentersCenterIdSubjectsRouteImport } from './routes/_authenticated/centers.$centerId.subjects'
 import { Route as AuthenticatedCentersCenterIdClassesGradeIdRouteImport } from './routes/_authenticated/centers.$centerId.classes.$gradeId'
 import { Route as AuthenticatedCentersCenterIdStudentsIndexRouteImport } from './routes/_authenticated/centers.$centerId.students.index'
@@ -92,6 +93,12 @@ const AuthenticatedCentersCenterIdReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
+const AuthenticatedCentersCenterIdSearchRoute =
+  AuthenticatedCentersCenterIdSearchRouteImport.update({
+    id: '/search',
+    path: '/search',
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
+  } as any)
 const AuthenticatedCentersCenterIdSubjectsRoute =
   AuthenticatedCentersCenterIdSubjectsRouteImport.update({
     id: '/subjects',
@@ -140,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/centers/': typeof AuthenticatedCentersIndexRoute
   '/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
   '/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
+  '/centers/$centerId/search': typeof AuthenticatedCentersCenterIdSearchRoute
   '/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
   '/centers/$centerId/': typeof AuthenticatedCentersCenterIdIndexRoute
   '/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
@@ -158,6 +166,7 @@ export interface FileRoutesByTo {
   '/centers': typeof AuthenticatedCentersIndexRoute
   '/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
   '/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
+  '/centers/$centerId/search': typeof AuthenticatedCentersCenterIdSearchRoute
   '/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
   '/centers/$centerId': typeof AuthenticatedCentersCenterIdIndexRoute
   '/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
@@ -179,6 +188,7 @@ export interface FileRoutesById {
   '/_authenticated/centers/': typeof AuthenticatedCentersIndexRoute
   '/_authenticated/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
   '/_authenticated/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
+  '/_authenticated/centers/$centerId/search': typeof AuthenticatedCentersCenterIdSearchRoute
   '/_authenticated/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
   '/_authenticated/centers/$centerId/': typeof AuthenticatedCentersCenterIdIndexRoute
   '/_authenticated/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/centers/'
     | '/centers/$centerId/progress'
     | '/centers/$centerId/reports'
+    | '/centers/$centerId/search'
     | '/centers/$centerId/subjects'
     | '/centers/$centerId/'
     | '/centers/$centerId/classes/$gradeId'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/centers'
     | '/centers/$centerId/progress'
     | '/centers/$centerId/reports'
+    | '/centers/$centerId/search'
     | '/centers/$centerId/subjects'
     | '/centers/$centerId'
     | '/centers/$centerId/classes/$gradeId'
@@ -238,6 +250,7 @@ export interface FileRouteTypes {
     | '/_authenticated/centers/'
     | '/_authenticated/centers/$centerId/progress'
     | '/_authenticated/centers/$centerId/reports'
+    | '/_authenticated/centers/$centerId/search'
     | '/_authenticated/centers/$centerId/subjects'
     | '/_authenticated/centers/$centerId/'
     | '/_authenticated/centers/$centerId/classes/$gradeId'
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCentersCenterIdReportsRouteImport
       parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
+    '/_authenticated/centers/$centerId/search': {
+      id: '/_authenticated/centers/$centerId/search'
+      path: '/search'
+      fullPath: '/centers/$centerId/search'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdSearchRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
+    }
     '/_authenticated/centers/$centerId/subjects': {
       id: '/_authenticated/centers/$centerId/subjects'
       path: '/subjects'
@@ -388,6 +408,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedCentersCenterIdRouteRouteChildren {
   AuthenticatedCentersCenterIdProgressRoute: typeof AuthenticatedCentersCenterIdProgressRoute
   AuthenticatedCentersCenterIdReportsRoute: typeof AuthenticatedCentersCenterIdReportsRoute
+  AuthenticatedCentersCenterIdSearchRoute: typeof AuthenticatedCentersCenterIdSearchRoute
   AuthenticatedCentersCenterIdSubjectsRoute: typeof AuthenticatedCentersCenterIdSubjectsRoute
   AuthenticatedCentersCenterIdIndexRoute: typeof AuthenticatedCentersCenterIdIndexRoute
   AuthenticatedCentersCenterIdClassesGradeIdRoute: typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
@@ -403,6 +424,8 @@ const AuthenticatedCentersCenterIdRouteRouteChildren: AuthenticatedCentersCenter
       AuthenticatedCentersCenterIdProgressRoute,
     AuthenticatedCentersCenterIdReportsRoute:
       AuthenticatedCentersCenterIdReportsRoute,
+    AuthenticatedCentersCenterIdSearchRoute:
+      AuthenticatedCentersCenterIdSearchRoute,
     AuthenticatedCentersCenterIdSubjectsRoute:
       AuthenticatedCentersCenterIdSubjectsRoute,
     AuthenticatedCentersCenterIdIndexRoute:
