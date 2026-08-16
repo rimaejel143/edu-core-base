@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   Activity,
@@ -34,6 +34,7 @@ import {
   teachersQuery,
 } from "@/lib/api";
 import { useScopeId } from "@/hooks/useCenterScope";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   beforeLoad: async () => {
