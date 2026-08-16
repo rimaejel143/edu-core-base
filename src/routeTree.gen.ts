@@ -14,18 +14,19 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
-import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
-import { Route as AuthenticatedSubjectsRouteImport } from './routes/_authenticated/subjects'
 import { Route as AuthenticatedCentersIndexRouteImport } from './routes/_authenticated/centers.index'
-import { Route as AuthenticatedCentersCenterIdRouteImport } from './routes/_authenticated/centers.$centerId'
-import { Route as AuthenticatedClassesGradeIdRouteImport } from './routes/_authenticated/classes.$gradeId'
-import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authenticated/students.index'
-import { Route as AuthenticatedStudentsStudentIdRouteImport } from './routes/_authenticated/students.$studentId'
-import { Route as AuthenticatedTeachersIndexRouteImport } from './routes/_authenticated/teachers.index'
-import { Route as AuthenticatedTeachersTeacherIdRouteImport } from './routes/_authenticated/teachers.$teacherId'
+import { Route as AuthenticatedCentersCenterIdRouteRouteImport } from './routes/_authenticated/centers.$centerId.route'
+import { Route as AuthenticatedCentersCenterIdIndexRouteImport } from './routes/_authenticated/centers.$centerId.index'
+import { Route as AuthenticatedCentersCenterIdProgressRouteImport } from './routes/_authenticated/centers.$centerId.progress'
+import { Route as AuthenticatedCentersCenterIdReportsRouteImport } from './routes/_authenticated/centers.$centerId.reports'
+import { Route as AuthenticatedCentersCenterIdSubjectsRouteImport } from './routes/_authenticated/centers.$centerId.subjects'
+import { Route as AuthenticatedCentersCenterIdClassesGradeIdRouteImport } from './routes/_authenticated/centers.$centerId.classes.$gradeId'
+import { Route as AuthenticatedCentersCenterIdStudentsIndexRouteImport } from './routes/_authenticated/centers.$centerId.students.index'
+import { Route as AuthenticatedCentersCenterIdStudentsStudentIdRouteImport } from './routes/_authenticated/centers.$centerId.students.$studentId'
+import { Route as AuthenticatedCentersCenterIdTeachersIndexRouteImport } from './routes/_authenticated/centers.$centerId.teachers.index'
+import { Route as AuthenticatedCentersCenterIdTeachersTeacherIdRouteImport } from './routes/_authenticated/centers.$centerId.teachers.$teacherId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,16 +52,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedProgressRoute = AuthenticatedProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -71,52 +62,71 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedSubjectsRoute = AuthenticatedSubjectsRouteImport.update({
-  id: '/subjects',
-  path: '/subjects',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedCentersIndexRoute =
   AuthenticatedCentersIndexRouteImport.update({
     id: '/centers/',
     path: '/centers/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedCentersCenterIdRoute =
-  AuthenticatedCentersCenterIdRouteImport.update({
+const AuthenticatedCentersCenterIdRouteRoute =
+  AuthenticatedCentersCenterIdRouteRouteImport.update({
     id: '/centers/$centerId',
     path: '/centers/$centerId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedClassesGradeIdRoute =
-  AuthenticatedClassesGradeIdRouteImport.update({
+const AuthenticatedCentersCenterIdIndexRoute =
+  AuthenticatedCentersCenterIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
+  } as any)
+const AuthenticatedCentersCenterIdProgressRoute =
+  AuthenticatedCentersCenterIdProgressRouteImport.update({
+    id: '/progress',
+    path: '/progress',
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
+  } as any)
+const AuthenticatedCentersCenterIdReportsRoute =
+  AuthenticatedCentersCenterIdReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
+  } as any)
+const AuthenticatedCentersCenterIdSubjectsRoute =
+  AuthenticatedCentersCenterIdSubjectsRouteImport.update({
+    id: '/subjects',
+    path: '/subjects',
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
+  } as any)
+const AuthenticatedCentersCenterIdClassesGradeIdRoute =
+  AuthenticatedCentersCenterIdClassesGradeIdRouteImport.update({
     id: '/classes/$gradeId',
     path: '/classes/$gradeId',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
-const AuthenticatedStudentsIndexRoute =
-  AuthenticatedStudentsIndexRouteImport.update({
+const AuthenticatedCentersCenterIdStudentsIndexRoute =
+  AuthenticatedCentersCenterIdStudentsIndexRouteImport.update({
     id: '/students/',
     path: '/students/',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
-const AuthenticatedStudentsStudentIdRoute =
-  AuthenticatedStudentsStudentIdRouteImport.update({
+const AuthenticatedCentersCenterIdStudentsStudentIdRoute =
+  AuthenticatedCentersCenterIdStudentsStudentIdRouteImport.update({
     id: '/students/$studentId',
     path: '/students/$studentId',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
-const AuthenticatedTeachersIndexRoute =
-  AuthenticatedTeachersIndexRouteImport.update({
+const AuthenticatedCentersCenterIdTeachersIndexRoute =
+  AuthenticatedCentersCenterIdTeachersIndexRouteImport.update({
     id: '/teachers/',
     path: '/teachers/',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
-const AuthenticatedTeachersTeacherIdRoute =
-  AuthenticatedTeachersTeacherIdRouteImport.update({
+const AuthenticatedCentersCenterIdTeachersTeacherIdRoute =
+  AuthenticatedCentersCenterIdTeachersTeacherIdRouteImport.update({
     id: '/teachers/$teacherId',
     path: '/teachers/$teacherId',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -124,36 +134,37 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/progress': typeof AuthenticatedProgressRoute
-  '/reports': typeof AuthenticatedReportsRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/subjects': typeof AuthenticatedSubjectsRoute
-  '/centers/$centerId': typeof AuthenticatedCentersCenterIdRoute
-  '/classes/$gradeId': typeof AuthenticatedClassesGradeIdRoute
-  '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
-  '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
+  '/centers/$centerId': typeof AuthenticatedCentersCenterIdRouteRouteWithChildren
   '/centers/': typeof AuthenticatedCentersIndexRoute
-  '/students/': typeof AuthenticatedStudentsIndexRoute
-  '/teachers/': typeof AuthenticatedTeachersIndexRoute
+  '/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
+  '/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
+  '/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
+  '/centers/$centerId/': typeof AuthenticatedCentersCenterIdIndexRoute
+  '/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
+  '/centers/$centerId/students/$studentId': typeof AuthenticatedCentersCenterIdStudentsStudentIdRoute
+  '/centers/$centerId/teachers/$teacherId': typeof AuthenticatedCentersCenterIdTeachersTeacherIdRoute
+  '/centers/$centerId/students/': typeof AuthenticatedCentersCenterIdStudentsIndexRoute
+  '/centers/$centerId/teachers/': typeof AuthenticatedCentersCenterIdTeachersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/progress': typeof AuthenticatedProgressRoute
-  '/reports': typeof AuthenticatedReportsRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/subjects': typeof AuthenticatedSubjectsRoute
-  '/centers/$centerId': typeof AuthenticatedCentersCenterIdRoute
-  '/classes/$gradeId': typeof AuthenticatedClassesGradeIdRoute
-  '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
-  '/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
   '/centers': typeof AuthenticatedCentersIndexRoute
-  '/students': typeof AuthenticatedStudentsIndexRoute
-  '/teachers': typeof AuthenticatedTeachersIndexRoute
+  '/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
+  '/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
+  '/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
+  '/centers/$centerId': typeof AuthenticatedCentersCenterIdIndexRoute
+  '/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
+  '/centers/$centerId/students/$studentId': typeof AuthenticatedCentersCenterIdStudentsStudentIdRoute
+  '/centers/$centerId/teachers/$teacherId': typeof AuthenticatedCentersCenterIdTeachersTeacherIdRoute
+  '/centers/$centerId/students': typeof AuthenticatedCentersCenterIdStudentsIndexRoute
+  '/centers/$centerId/teachers': typeof AuthenticatedCentersCenterIdTeachersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -162,18 +173,19 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/progress': typeof AuthenticatedProgressRoute
-  '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/subjects': typeof AuthenticatedSubjectsRoute
-  '/_authenticated/centers/$centerId': typeof AuthenticatedCentersCenterIdRoute
-  '/_authenticated/classes/$gradeId': typeof AuthenticatedClassesGradeIdRoute
-  '/_authenticated/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
-  '/_authenticated/teachers/$teacherId': typeof AuthenticatedTeachersTeacherIdRoute
+  '/_authenticated/centers/$centerId': typeof AuthenticatedCentersCenterIdRouteRouteWithChildren
   '/_authenticated/centers/': typeof AuthenticatedCentersIndexRoute
-  '/_authenticated/students/': typeof AuthenticatedStudentsIndexRoute
-  '/_authenticated/teachers/': typeof AuthenticatedTeachersIndexRoute
+  '/_authenticated/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
+  '/_authenticated/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
+  '/_authenticated/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
+  '/_authenticated/centers/$centerId/': typeof AuthenticatedCentersCenterIdIndexRoute
+  '/_authenticated/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
+  '/_authenticated/centers/$centerId/students/$studentId': typeof AuthenticatedCentersCenterIdStudentsStudentIdRoute
+  '/_authenticated/centers/$centerId/teachers/$teacherId': typeof AuthenticatedCentersCenterIdTeachersTeacherIdRoute
+  '/_authenticated/centers/$centerId/students/': typeof AuthenticatedCentersCenterIdStudentsIndexRoute
+  '/_authenticated/centers/$centerId/teachers/': typeof AuthenticatedCentersCenterIdTeachersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -182,36 +194,37 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/dashboard'
-    | '/progress'
-    | '/reports'
     | '/search'
     | '/settings'
-    | '/subjects'
     | '/centers/$centerId'
-    | '/classes/$gradeId'
-    | '/students/$studentId'
-    | '/teachers/$teacherId'
     | '/centers/'
-    | '/students/'
-    | '/teachers/'
+    | '/centers/$centerId/progress'
+    | '/centers/$centerId/reports'
+    | '/centers/$centerId/subjects'
+    | '/centers/$centerId/'
+    | '/centers/$centerId/classes/$gradeId'
+    | '/centers/$centerId/students/$studentId'
+    | '/centers/$centerId/teachers/$teacherId'
+    | '/centers/$centerId/students/'
+    | '/centers/$centerId/teachers/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/reset-password'
     | '/dashboard'
-    | '/progress'
-    | '/reports'
     | '/search'
     | '/settings'
-    | '/subjects'
-    | '/centers/$centerId'
-    | '/classes/$gradeId'
-    | '/students/$studentId'
-    | '/teachers/$teacherId'
     | '/centers'
-    | '/students'
-    | '/teachers'
+    | '/centers/$centerId/progress'
+    | '/centers/$centerId/reports'
+    | '/centers/$centerId/subjects'
+    | '/centers/$centerId'
+    | '/centers/$centerId/classes/$gradeId'
+    | '/centers/$centerId/students/$studentId'
+    | '/centers/$centerId/teachers/$teacherId'
+    | '/centers/$centerId/students'
+    | '/centers/$centerId/teachers'
   id:
     | '__root__'
     | '/'
@@ -219,18 +232,19 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/_authenticated/dashboard'
-    | '/_authenticated/progress'
-    | '/_authenticated/reports'
     | '/_authenticated/search'
     | '/_authenticated/settings'
-    | '/_authenticated/subjects'
     | '/_authenticated/centers/$centerId'
-    | '/_authenticated/classes/$gradeId'
-    | '/_authenticated/students/$studentId'
-    | '/_authenticated/teachers/$teacherId'
     | '/_authenticated/centers/'
-    | '/_authenticated/students/'
-    | '/_authenticated/teachers/'
+    | '/_authenticated/centers/$centerId/progress'
+    | '/_authenticated/centers/$centerId/reports'
+    | '/_authenticated/centers/$centerId/subjects'
+    | '/_authenticated/centers/$centerId/'
+    | '/_authenticated/centers/$centerId/classes/$gradeId'
+    | '/_authenticated/centers/$centerId/students/$studentId'
+    | '/_authenticated/centers/$centerId/teachers/$teacherId'
+    | '/_authenticated/centers/$centerId/students/'
+    | '/_authenticated/centers/$centerId/teachers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -277,20 +291,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/progress': {
-      id: '/_authenticated/progress'
-      path: '/progress'
-      fullPath: '/progress'
-      preLoaderRoute: typeof AuthenticatedProgressRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/reports': {
-      id: '/_authenticated/reports'
-      path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof AuthenticatedReportsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/search': {
       id: '/_authenticated/search'
       path: '/search'
@@ -305,13 +305,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/subjects': {
-      id: '/_authenticated/subjects'
-      path: '/subjects'
-      fullPath: '/subjects'
-      preLoaderRoute: typeof AuthenticatedSubjectsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/centers/': {
       id: '/_authenticated/centers/'
       path: '/centers'
@@ -323,77 +316,129 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated/centers/$centerId'
       path: '/centers/$centerId'
       fullPath: '/centers/$centerId'
-      preLoaderRoute: typeof AuthenticatedCentersCenterIdRouteImport
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/classes/$gradeId': {
-      id: '/_authenticated/classes/$gradeId'
+    '/_authenticated/centers/$centerId/': {
+      id: '/_authenticated/centers/$centerId/'
+      path: '/'
+      fullPath: '/centers/$centerId/'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdIndexRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
+    }
+    '/_authenticated/centers/$centerId/progress': {
+      id: '/_authenticated/centers/$centerId/progress'
+      path: '/progress'
+      fullPath: '/centers/$centerId/progress'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdProgressRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
+    }
+    '/_authenticated/centers/$centerId/reports': {
+      id: '/_authenticated/centers/$centerId/reports'
+      path: '/reports'
+      fullPath: '/centers/$centerId/reports'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdReportsRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
+    }
+    '/_authenticated/centers/$centerId/subjects': {
+      id: '/_authenticated/centers/$centerId/subjects'
+      path: '/subjects'
+      fullPath: '/centers/$centerId/subjects'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdSubjectsRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
+    }
+    '/_authenticated/centers/$centerId/classes/$gradeId': {
+      id: '/_authenticated/centers/$centerId/classes/$gradeId'
       path: '/classes/$gradeId'
-      fullPath: '/classes/$gradeId'
-      preLoaderRoute: typeof AuthenticatedClassesGradeIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      fullPath: '/centers/$centerId/classes/$gradeId'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdClassesGradeIdRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
-    '/_authenticated/students/': {
-      id: '/_authenticated/students/'
+    '/_authenticated/centers/$centerId/students/': {
+      id: '/_authenticated/centers/$centerId/students/'
       path: '/students'
-      fullPath: '/students/'
-      preLoaderRoute: typeof AuthenticatedStudentsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      fullPath: '/centers/$centerId/students/'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdStudentsIndexRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
-    '/_authenticated/students/$studentId': {
-      id: '/_authenticated/students/$studentId'
+    '/_authenticated/centers/$centerId/students/$studentId': {
+      id: '/_authenticated/centers/$centerId/students/$studentId'
       path: '/students/$studentId'
-      fullPath: '/students/$studentId'
-      preLoaderRoute: typeof AuthenticatedStudentsStudentIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      fullPath: '/centers/$centerId/students/$studentId'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdStudentsStudentIdRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
-    '/_authenticated/teachers/': {
-      id: '/_authenticated/teachers/'
+    '/_authenticated/centers/$centerId/teachers/': {
+      id: '/_authenticated/centers/$centerId/teachers/'
       path: '/teachers'
-      fullPath: '/teachers/'
-      preLoaderRoute: typeof AuthenticatedTeachersIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      fullPath: '/centers/$centerId/teachers/'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdTeachersIndexRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
-    '/_authenticated/teachers/$teacherId': {
-      id: '/_authenticated/teachers/$teacherId'
+    '/_authenticated/centers/$centerId/teachers/$teacherId': {
+      id: '/_authenticated/centers/$centerId/teachers/$teacherId'
       path: '/teachers/$teacherId'
-      fullPath: '/teachers/$teacherId'
-      preLoaderRoute: typeof AuthenticatedTeachersTeacherIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      fullPath: '/centers/$centerId/teachers/$teacherId'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdTeachersTeacherIdRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
   }
 }
 
+interface AuthenticatedCentersCenterIdRouteRouteChildren {
+  AuthenticatedCentersCenterIdProgressRoute: typeof AuthenticatedCentersCenterIdProgressRoute
+  AuthenticatedCentersCenterIdReportsRoute: typeof AuthenticatedCentersCenterIdReportsRoute
+  AuthenticatedCentersCenterIdSubjectsRoute: typeof AuthenticatedCentersCenterIdSubjectsRoute
+  AuthenticatedCentersCenterIdIndexRoute: typeof AuthenticatedCentersCenterIdIndexRoute
+  AuthenticatedCentersCenterIdClassesGradeIdRoute: typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
+  AuthenticatedCentersCenterIdStudentsStudentIdRoute: typeof AuthenticatedCentersCenterIdStudentsStudentIdRoute
+  AuthenticatedCentersCenterIdTeachersTeacherIdRoute: typeof AuthenticatedCentersCenterIdTeachersTeacherIdRoute
+  AuthenticatedCentersCenterIdStudentsIndexRoute: typeof AuthenticatedCentersCenterIdStudentsIndexRoute
+  AuthenticatedCentersCenterIdTeachersIndexRoute: typeof AuthenticatedCentersCenterIdTeachersIndexRoute
+}
+
+const AuthenticatedCentersCenterIdRouteRouteChildren: AuthenticatedCentersCenterIdRouteRouteChildren =
+  {
+    AuthenticatedCentersCenterIdProgressRoute:
+      AuthenticatedCentersCenterIdProgressRoute,
+    AuthenticatedCentersCenterIdReportsRoute:
+      AuthenticatedCentersCenterIdReportsRoute,
+    AuthenticatedCentersCenterIdSubjectsRoute:
+      AuthenticatedCentersCenterIdSubjectsRoute,
+    AuthenticatedCentersCenterIdIndexRoute:
+      AuthenticatedCentersCenterIdIndexRoute,
+    AuthenticatedCentersCenterIdClassesGradeIdRoute:
+      AuthenticatedCentersCenterIdClassesGradeIdRoute,
+    AuthenticatedCentersCenterIdStudentsStudentIdRoute:
+      AuthenticatedCentersCenterIdStudentsStudentIdRoute,
+    AuthenticatedCentersCenterIdTeachersTeacherIdRoute:
+      AuthenticatedCentersCenterIdTeachersTeacherIdRoute,
+    AuthenticatedCentersCenterIdStudentsIndexRoute:
+      AuthenticatedCentersCenterIdStudentsIndexRoute,
+    AuthenticatedCentersCenterIdTeachersIndexRoute:
+      AuthenticatedCentersCenterIdTeachersIndexRoute,
+  }
+
+const AuthenticatedCentersCenterIdRouteRouteWithChildren =
+  AuthenticatedCentersCenterIdRouteRoute._addFileChildren(
+    AuthenticatedCentersCenterIdRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
-  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedSubjectsRoute: typeof AuthenticatedSubjectsRoute
-  AuthenticatedCentersCenterIdRoute: typeof AuthenticatedCentersCenterIdRoute
-  AuthenticatedClassesGradeIdRoute: typeof AuthenticatedClassesGradeIdRoute
-  AuthenticatedStudentsStudentIdRoute: typeof AuthenticatedStudentsStudentIdRoute
-  AuthenticatedTeachersTeacherIdRoute: typeof AuthenticatedTeachersTeacherIdRoute
+  AuthenticatedCentersCenterIdRouteRoute: typeof AuthenticatedCentersCenterIdRouteRouteWithChildren
   AuthenticatedCentersIndexRoute: typeof AuthenticatedCentersIndexRoute
-  AuthenticatedStudentsIndexRoute: typeof AuthenticatedStudentsIndexRoute
-  AuthenticatedTeachersIndexRoute: typeof AuthenticatedTeachersIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedProgressRoute: AuthenticatedProgressRoute,
-  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedSubjectsRoute: AuthenticatedSubjectsRoute,
-  AuthenticatedCentersCenterIdRoute: AuthenticatedCentersCenterIdRoute,
-  AuthenticatedClassesGradeIdRoute: AuthenticatedClassesGradeIdRoute,
-  AuthenticatedStudentsStudentIdRoute: AuthenticatedStudentsStudentIdRoute,
-  AuthenticatedTeachersTeacherIdRoute: AuthenticatedTeachersTeacherIdRoute,
+  AuthenticatedCentersCenterIdRouteRoute:
+    AuthenticatedCentersCenterIdRouteRouteWithChildren,
   AuthenticatedCentersIndexRoute: AuthenticatedCentersIndexRoute,
-  AuthenticatedStudentsIndexRoute: AuthenticatedStudentsIndexRoute,
-  AuthenticatedTeachersIndexRoute: AuthenticatedTeachersIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
