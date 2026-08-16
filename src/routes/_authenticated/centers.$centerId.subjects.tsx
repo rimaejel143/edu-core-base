@@ -90,10 +90,6 @@ function SubjectsPage() {
 
   const centerName = (id: string) =>
     centers.data?.find((center) => center.id === id)?.name ?? "—";
-  const centerOptions = (centers.data ?? []).map((center) => ({
-    value: center.id,
-    label: center.name,
-  }));
 
   const gradesForSubject = (subjectId: string) =>
     (subjectGrades.data ?? [])

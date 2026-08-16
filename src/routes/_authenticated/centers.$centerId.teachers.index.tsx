@@ -207,10 +207,6 @@ function TeachersPage() {
     setAssignFor(null);
   };
 
-  const centerOptions = (centers.data ?? []).map((center) => ({
-    value: center.id,
-    label: center.name,
-  }));
 
   return (
     <>
