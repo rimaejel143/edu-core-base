@@ -36,6 +36,20 @@ import {
 import { useScopeId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  beforeLoad: async () => {
+    // Center admins always work inside their own center workspace.
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) return;
+    const [{ data: roles }, { data: profile }] = await Promise.all([
+      supabase.from("user_roles").select("role").eq("user_id", auth.user.id),
+      supabase.from("profiles").select("center_id").eq("id", auth.user.id).maybeSingle(),
+    ]);
+    const isSuperAdmin = (roles ?? []).some((row) => row.role === "super_admin");
+    if (!isSuperAdmin && profile?.center_id) {
+      throw redirect({ to: "/centers/$centerId", params: { centerId: profile.center_id } });
+    }
+  },
+
   head: () => ({
     meta: [
       { title: "Dashboard — Center Management System" },
