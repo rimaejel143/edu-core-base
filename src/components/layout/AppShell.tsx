@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogOut, Search, User as UserIcon } from "lucide-react";
 import { useState, type FormEvent, type ReactNode } from "react";
 
@@ -17,16 +17,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
-import { initials } from "@/lib/api";
+import { useWorkspaceCenterId } from "@/hooks/useCenterScope";
+import { centerQuery, initials } from "@/lib/api";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile, user, isSuperAdmin, signOut } = useAuth();
+  const workspaceCenterId = useWorkspaceCenterId();
+  const activeCenterId = workspaceCenterId ?? (isSuperAdmin ? null : profile?.center_id ?? null);
+  const centerName = useQuery(centerQuery(activeCenterId)).data?.name ?? null;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [term, setTerm] = useState("");
 
   function handleSearch(event: FormEvent) {
     event.preventDefault();
+    if (activeCenterId) {
+      void navigate({
+        to: "/centers/$centerId/search",
+        params: { centerId: activeCenterId },
+        search: { q: term.trim() },
+      });
+      return;
+    }
     void navigate({ to: "/search", search: { q: term.trim() } });
   }
 
@@ -49,7 +61,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="flex min-w-0 items-center gap-2">
               <SidebarTrigger />
               <span className="truncate text-sm font-medium text-muted-foreground">
-                {profile?.center_id ? "Center workspace" : "No center assigned"}
+                {centerName ?? (isSuperAdmin ? "Platform administration" : "No center assigned")}
               </span>
             </div>
 
@@ -60,7 +72,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                 onChange={(event) => setTerm(event.target.value)}
                 placeholder={
                   isSuperAdmin
-                    ? "Search centers, students, teachers…"
+                    ? activeCenterId
+                      ? "Search this center…"
+                      : "Search centers…"
                     : "Search students, teachers, classes…"
                 }
                 className="h-9 pl-9"
