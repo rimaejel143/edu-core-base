@@ -26,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+import { useScopeId } from "@/hooks/useCenterScope";
   assessmentsQuery,
   attendanceQuery,
   attendanceRate,
@@ -61,16 +62,17 @@ export const Route = createFileRoute("/_authenticated/classes/$gradeId")({
 
 function ClassDetailPage() {
   const { gradeId } = useParams({ from: "/_authenticated/classes/$gradeId" });
-  const grades = useQuery(gradesQuery);
-  const centers = useQuery(centersQuery);
-  const students = useQuery(studentsQuery);
-  const subjects = useQuery(subjectsQuery);
-  const subjectGrades = useQuery(subjectGradesQuery);
-  const teachers = useQuery(teachersQuery);
-  const teacherSubjects = useQuery(teacherSubjectsQuery);
-  const studentSubjects = useQuery(studentSubjectsQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const attendance = useQuery(attendanceQuery);
+  const scopeId = useScopeId();
+  const grades = useQuery(gradesQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const subjectGrades = useQuery(subjectGradesQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const teacherSubjects = useQuery(teacherSubjectsQuery(scopeId));
+  const studentSubjects = useQuery(studentSubjectsQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
 
   const grade = grades.data?.find((row) => row.id === gradeId) ?? null;
 

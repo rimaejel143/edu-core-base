@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+import { useScopeId } from "@/hooks/useCenterScope";
   activityQuery,
   assessmentsQuery,
   attendanceQuery,
@@ -69,15 +70,16 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId")({
 function CenterProfilePage() {
   const { centerId } = useParams({ from: "/_authenticated/centers/$centerId" });
 
-  const centers = useQuery(centersQuery);
-  const students = useQuery(studentsQuery);
-  const teachers = useQuery(teachersQuery);
-  const subjects = useQuery(subjectsQuery);
-  const grades = useQuery(gradesQuery);
-  const attendance = useQuery(attendanceQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const activity = useQuery(activityQuery);
-  const profiles = useQuery(profilesQuery);
+  const scopeId = useScopeId();
+  const centers = useQuery(centersQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const activity = useQuery(activityQuery(scopeId));
+  const profiles = useQuery(profilesQuery(scopeId));
 
   const center = centers.data?.find((row) => row.id === centerId) ?? null;
 

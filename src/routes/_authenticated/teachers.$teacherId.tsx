@@ -28,6 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+import { useScopeId } from "@/hooks/useCenterScope";
   assessmentsQuery,
   attendanceQuery,
   attendanceRate,
@@ -74,15 +75,16 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 
 function TeacherDetailPage() {
   const { teacherId } = useParams({ from: "/_authenticated/teachers/$teacherId" });
-  const teachers = useQuery(teachersQuery);
-  const teacherSubjects = useQuery(teacherSubjectsQuery);
-  const studentSubjects = useQuery(studentSubjectsQuery);
-  const students = useQuery(studentsQuery);
-  const subjects = useQuery(subjectsQuery);
-  const grades = useQuery(gradesQuery);
-  const centers = useQuery(centersQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const attendance = useQuery(attendanceQuery);
+  const scopeId = useScopeId();
+  const teachers = useQuery(teachersQuery(scopeId));
+  const teacherSubjects = useQuery(teacherSubjectsQuery(scopeId));
+  const studentSubjects = useQuery(studentSubjectsQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
 
   const teacher = teachers.data?.find((row) => row.id === teacherId) ?? null;
 

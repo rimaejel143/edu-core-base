@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useScopeId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   gradesQuery,
@@ -55,11 +56,12 @@ const STATUS_OPTIONS: { value: RecordStatus; label: string }[] = [
 
 function SubjectsPage() {
   const { centerId: myCenterId } = useAuth();
-  const subjects = useQuery(subjectsQuery);
-  const grades = useQuery(gradesQuery);
-  const centers = useQuery(centersQuery);
-  const students = useQuery(studentsQuery);
-  const subjectGrades = useQuery(subjectGradesQuery);
+  const scopeId = useScopeId();
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const subjectGrades = useQuery(subjectGradesQuery(scopeId));
   const subjectCrud = useCrud("subjects", "Subject");
   const gradeCrud = useCrud("grades", "Grade");
 

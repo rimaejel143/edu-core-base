@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
+import { useScopeId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   formatDate,
@@ -95,9 +96,10 @@ function emptyForm(centerId: string): StudentForm {
 
 function StudentsPage() {
   const { centerId: myCenterId, isSuperAdmin } = useAuth();
-  const students = useQuery(studentsQuery);
-  const centers = useQuery(centersQuery);
-  const grades = useQuery(gradesQuery);
+  const scopeId = useScopeId();
+  const students = useQuery(studentsQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
   const crud = useCrud("students", "Student");
 
   const [search, setSearch] = useState("");

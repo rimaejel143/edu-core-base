@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
+import { useScopeId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   fullName,
@@ -63,12 +64,13 @@ function SearchPage() {
   const { isSuperAdmin } = useAuth();
   const [term, setTerm] = useState(q);
 
-  const centers = useQuery(centersQuery);
-  const students = useQuery(studentsQuery);
-  const teachers = useQuery(teachersQuery);
-  const grades = useQuery(gradesQuery);
-  const subjects = useQuery(subjectsQuery);
-  const profiles = useQuery(profilesQuery);
+  const scopeId = useScopeId();
+  const centers = useQuery(centersQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const profiles = useQuery(profilesQuery(scopeId));
 
   const isLoading =
     centers.isLoading ||

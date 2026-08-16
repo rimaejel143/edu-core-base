@@ -42,6 +42,7 @@ import {
 import { useCrud } from "@/lib/crud";
 import { BookOpen, FileText, GraduationCap, LineChart, StickyNote } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useScopeId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/students/$studentId")({
   head: () => ({
@@ -69,16 +70,17 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 
 function StudentDetailPage() {
   const { studentId } = useParams({ from: "/_authenticated/students/$studentId" });
+  const scopeId = useScopeId();
   const student = useQuery(studentQuery(studentId));
-  const subjects = useQuery(subjectsQuery);
-  const grades = useQuery(gradesQuery);
-  const centers = useQuery(centersQuery);
-  const enrolments = useQuery(studentSubjectsQuery);
-  const assessments = useQuery(assessmentsQuery);
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const enrolments = useQuery(studentSubjectsQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
   const enrolCrud = useCrud("student_subjects", "Enrolment");
 
-  const notes = useQuery(studentNotesQuery);
-  const documents = useQuery(studentDocumentsQuery);
+  const notes = useQuery(studentNotesQuery(scopeId));
+  const documents = useQuery(studentDocumentsQuery(scopeId));
   const noteCrud = useCrud("student_notes", "Note");
   const documentCrud = useCrud("student_documents", "Document");
   const { user, profile } = useAuth();

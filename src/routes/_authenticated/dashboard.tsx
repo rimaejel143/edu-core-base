@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
+import { useScopeId } from "@/hooks/useCenterScope";
 import {
   activityQuery,
   buildRegistrationSeries,
@@ -51,10 +52,11 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function DashboardPage() {
   const { profile } = useAuth();
-  const students = useQuery(studentsQuery);
-  const teachers = useQuery(teachersQuery);
-  const subjects = useQuery(subjectsQuery);
-  const activity = useQuery(activityQuery);
+  const scopeId = useScopeId();
+  const students = useQuery(studentsQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const activity = useQuery(activityQuery(scopeId));
 
   const isLoading = students.isLoading || teachers.isLoading || subjects.isLoading;
   const stats = buildStats(students.data ?? [], teachers.data ?? [], subjects.data ?? []);

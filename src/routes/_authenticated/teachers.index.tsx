@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useScopeId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   formatDate,
@@ -77,11 +78,12 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 function TeachersPage() {
   const { centerId: myCenterId } = useAuth();
-  const teachers = useQuery(teachersQuery);
-  const centers = useQuery(centersQuery);
-  const subjects = useQuery(subjectsQuery);
-  const grades = useQuery(gradesQuery);
-  const links = useQuery(teacherSubjectsQuery);
+  const scopeId = useScopeId();
+  const teachers = useQuery(teachersQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const links = useQuery(teacherSubjectsQuery(scopeId));
   const crud = useCrud("teachers", "Teacher");
   const linkCrud = useCrud("teacher_subjects", "Assignment");
 

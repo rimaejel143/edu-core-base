@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
+import { useScopeId } from "@/hooks/useCenterScope";
 import {
   assessmentsQuery,
   attendanceQuery,
@@ -116,10 +117,11 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 
 function ProgressPage() {
   const { centerId } = useAuth();
-  const students = useQuery(studentsQuery);
-  const subjects = useQuery(subjectsQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const attendance = useQuery(attendanceQuery);
+  const scopeId = useScopeId();
+  const students = useQuery(studentsQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
 
   const examCrud = useCrud("assessments", "Exam score");
   const attendanceCrud = useCrud("attendance", "Attendance record");

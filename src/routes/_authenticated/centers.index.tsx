@@ -32,6 +32,7 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { Center, RecordStatus } from "@/lib/types";
+import { useScopeId } from "@/hooks/useCenterScope";
 
 /** Super Admin only. Center Admins are redirected away. */
 export const Route = createFileRoute("/_authenticated/centers/")({
@@ -90,11 +91,12 @@ const emptyForm = (): CenterForm => ({
 });
 
 function CentersPage() {
-  const centers = useQuery(centersQuery);
-  const profiles = useQuery(profilesQuery);
-  const students = useQuery(studentsQuery);
-  const teachers = useQuery(teachersQuery);
-  const subjects = useQuery(subjectsQuery);
+  const scopeId = useScopeId();
+  const centers = useQuery(centersQuery(scopeId));
+  const profiles = useQuery(profilesQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
   const crud = useCrud("centers", "Center");
 
   const [search, setSearch] = useState("");

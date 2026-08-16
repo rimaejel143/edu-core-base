@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
+import { useScopeId } from "@/hooks/useCenterScope";
 import {
   assessmentsQuery,
   attendanceQuery,
@@ -110,13 +111,14 @@ function printAsPdf(title: string, rows: Record<string, string | number>[]) {
 
 function ReportsPage() {
   const { centerId } = useAuth();
-  const students = useQuery(studentsQuery);
-  const teachers = useQuery(teachersQuery);
-  const subjects = useQuery(subjectsQuery);
-  const centers = useQuery(centersQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const attendance = useQuery(attendanceQuery);
-  const reports = useQuery(reportsQuery);
+  const scopeId = useScopeId();
+  const students = useQuery(studentsQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
+  const reports = useQuery(reportsQuery(scopeId));
   const crud = useCrud("reports", "Report");
 
   const [type, setType] = useState<ReportType>("student");
