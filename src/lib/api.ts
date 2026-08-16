@@ -30,17 +30,23 @@ function unwrap<T>(result: { data: T | null; error: { message: string } | null }
   return (result.data ?? []) as T;
 }
 
-export const studentsQuery = queryOptions({
-  queryKey: ["students"],
-  queryFn: async (): Promise<Student[]> =>
-    unwrap(
-      await supabase.from("students").select("*").order("created_at", { ascending: false }),
-    ),
-});
+type ScopeId = string | null | undefined;
+
+/** Center-scoped list queries. Passing a centerId filters at the database level;
+ *  Row Level Security still enforces isolation for center admins. */
+export const studentsQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["students", centerId ?? "all"],
+    queryFn: async (): Promise<Student[]> => {
+      let q = supabase.from("students").select("*").order("created_at", { ascending: false });
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
 export const studentQuery = (studentId: string) =>
   queryOptions({
-    queryKey: ["students", studentId],
+    queryKey: ["students", "one", studentId],
     queryFn: async (): Promise<Student | null> => {
       const { data, error } = await supabase
         .from("students")
@@ -52,121 +58,160 @@ export const studentQuery = (studentId: string) =>
     },
   });
 
-export const teachersQuery = queryOptions({
-  queryKey: ["teachers"],
-  queryFn: async (): Promise<Teacher[]> =>
-    unwrap(
-      await supabase.from("teachers").select("*").order("created_at", { ascending: false }),
-    ),
-});
+export const teachersQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["teachers", centerId ?? "all"],
+    queryFn: async (): Promise<Teacher[]> => {
+      let q = supabase.from("teachers").select("*").order("created_at", { ascending: false });
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const subjectsQuery = queryOptions({
-  queryKey: ["subjects"],
-  queryFn: async (): Promise<Subject[]> =>
-    unwrap(await supabase.from("subjects").select("*").order("name")),
-});
+export const subjectsQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["subjects", centerId ?? "all"],
+    queryFn: async (): Promise<Subject[]> => {
+      let q = supabase.from("subjects").select("*").order("name");
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const gradesQuery = queryOptions({
-  queryKey: ["grades"],
-  queryFn: async (): Promise<Grade[]> =>
-    unwrap(
-      await supabase
+export const gradesQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["grades", centerId ?? "all"],
+    queryFn: async (): Promise<Grade[]> => {
+      let q = supabase
         .from("grades")
         .select("*")
         .order("level_order", { ascending: true, nullsFirst: false })
-        .order("name"),
-    ),
-});
+        .order("name");
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const centersQuery = queryOptions({
-  queryKey: ["centers"],
-  queryFn: async (): Promise<Center[]> =>
-    unwrap(await supabase.from("centers").select("*").order("name")),
-});
+export const centersQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["centers", centerId ?? "all"],
+    queryFn: async (): Promise<Center[]> => {
+      let q = supabase.from("centers").select("*").order("name");
+      if (centerId) q = q.eq("id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const profilesQuery = queryOptions({
-  queryKey: ["profiles"],
-  queryFn: async (): Promise<Profile[]> =>
-    unwrap(await supabase.from("profiles").select("*").order("full_name")),
-});
+export const profilesQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["profiles", centerId ?? "all"],
+    queryFn: async (): Promise<Profile[]> => {
+      let q = supabase.from("profiles").select("*").order("full_name");
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const subjectGradesQuery = queryOptions({
-  queryKey: ["subject_grades"],
-  queryFn: async (): Promise<SubjectGrade[]> =>
-    unwrap(await supabase.from("subject_grades").select("*")),
-});
+export const subjectGradesQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["subject_grades", centerId ?? "all"],
+    queryFn: async (): Promise<SubjectGrade[]> => {
+      let q = supabase.from("subject_grades").select("*");
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const teacherSubjectsQuery = queryOptions({
-  queryKey: ["teacher_subjects"],
-  queryFn: async (): Promise<TeacherSubject[]> =>
-    unwrap(await supabase.from("teacher_subjects").select("*")),
-});
+export const teacherSubjectsQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["teacher_subjects", centerId ?? "all"],
+    queryFn: async (): Promise<TeacherSubject[]> => {
+      let q = supabase.from("teacher_subjects").select("*");
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const studentSubjectsQuery = queryOptions({
-  queryKey: ["student_subjects"],
-  queryFn: async (): Promise<StudentSubject[]> =>
-    unwrap(await supabase.from("student_subjects").select("*")),
-});
+export const studentSubjectsQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["student_subjects", centerId ?? "all"],
+    queryFn: async (): Promise<StudentSubject[]> => {
+      let q = supabase.from("student_subjects").select("*");
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const assessmentsQuery = queryOptions({
-  queryKey: ["assessments"],
-  queryFn: async (): Promise<Assessment[]> =>
-    unwrap(
-      await supabase
+export const assessmentsQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["assessments", centerId ?? "all"],
+    queryFn: async (): Promise<Assessment[]> => {
+      let q = supabase
         .from("assessments")
         .select("*")
-        .order("assessment_date", { ascending: false }),
-    ),
-});
+        .order("assessment_date", { ascending: false });
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const activityQuery = queryOptions({
-  queryKey: ["activity_log"],
-  queryFn: async (): Promise<ActivityLog[]> =>
-    unwrap(
-      await supabase
+export const activityQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["activity_log", centerId ?? "all"],
+    queryFn: async (): Promise<ActivityLog[]> => {
+      let q = supabase
         .from("activity_log")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(20),
-    ),
-});
+        .limit(20);
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const attendanceQuery = queryOptions({
-  queryKey: ["attendance"],
-  queryFn: async (): Promise<AttendanceRecord[]> =>
-    unwrap(
-      await supabase
+export const attendanceQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["attendance", centerId ?? "all"],
+    queryFn: async (): Promise<AttendanceRecord[]> => {
+      let q = supabase
         .from("attendance")
         .select("*")
         .order("session_date", { ascending: false })
-        .limit(2000),
-    ),
-});
+        .limit(2000);
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const progressQuery = queryOptions({
-  queryKey: ["progress_records"],
-  queryFn: async (): Promise<ProgressRecord[]> =>
-    unwrap(
-      await supabase
+export const progressQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["progress_records", centerId ?? "all"],
+    queryFn: async (): Promise<ProgressRecord[]> => {
+      let q = supabase
         .from("progress_records")
         .select("*")
-        .order("record_date", { ascending: false }),
-    ),
-});
+        .order("record_date", { ascending: false });
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const reportsQuery = queryOptions({
-  queryKey: ["reports"],
-  queryFn: async (): Promise<CenterReport[]> =>
-    unwrap(
-      await supabase.from("reports").select("*").order("created_at", { ascending: false }),
-    ),
-});
+export const reportsQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["reports", centerId ?? "all"],
+    queryFn: async (): Promise<CenterReport[]> => {
+      let q = supabase.from("reports").select("*").order("created_at", { ascending: false });
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const userRolesQuery = queryOptions({
-  queryKey: ["user_roles"],
-  queryFn: async (): Promise<{ user_id: string; role: AppRole }[]> =>
-    unwrap(await supabase.from("user_roles").select("user_id, role")),
-});
+export const userRolesQuery = () =>
+  queryOptions({
+    queryKey: ["user_roles"],
+    queryFn: async (): Promise<{ user_id: string; role: AppRole }[]> =>
+      unwrap(await supabase.from("user_roles").select("user_id, role")),
+  });
 
 
 export const centerQuery = (centerId: string | null) =>
@@ -282,24 +327,28 @@ export function averageScore(records: { score: number | null; max_score: number 
   return Math.round((total / valid.length) * 10) / 10;
 }
 
-export const studentNotesQuery = queryOptions({
-  queryKey: ["student_notes"],
-  queryFn: async (): Promise<StudentNote[]> =>
-    unwrap(
-      await supabase.from("student_notes").select("*").order("created_at", { ascending: false }),
-    ),
-});
+export const studentNotesQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["student_notes", centerId ?? "all"],
+    queryFn: async (): Promise<StudentNote[]> => {
+      let q = supabase.from("student_notes").select("*").order("created_at", { ascending: false });
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
-export const studentDocumentsQuery = queryOptions({
-  queryKey: ["student_documents"],
-  queryFn: async (): Promise<StudentDocument[]> =>
-    unwrap(
-      await supabase
+export const studentDocumentsQuery = (centerId?: ScopeId) =>
+  queryOptions({
+    queryKey: ["student_documents", centerId ?? "all"],
+    queryFn: async (): Promise<StudentDocument[]> => {
+      let q = supabase
         .from("student_documents")
         .select("*")
-        .order("created_at", { ascending: false }),
-    ),
-});
+        .order("created_at", { ascending: false });
+      if (centerId) q = q.eq("center_id", centerId);
+      return unwrap(await q);
+    },
+  });
 
 /** Percentage of attendance records marked present or late. */
 export function attendanceRate(records: { status: string }[]): number | null {

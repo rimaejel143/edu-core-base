@@ -24,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAuth } from "@/hooks/useAuth";
 import {
   assessmentsQuery,
   attendanceQuery,
@@ -39,8 +38,9 @@ import {
   teachersQuery,
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/reports")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/reports")({
   head: () => ({
     meta: [
       { title: "Reports — Center Management System" },
@@ -109,14 +109,15 @@ function printAsPdf(title: string, rows: Record<string, string | number>[]) {
 }
 
 function ReportsPage() {
-  const { centerId } = useAuth();
-  const students = useQuery(studentsQuery);
-  const teachers = useQuery(teachersQuery);
-  const subjects = useQuery(subjectsQuery);
-  const centers = useQuery(centersQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const attendance = useQuery(attendanceQuery);
-  const reports = useQuery(reportsQuery);
+  const centerId = useWorkspaceCenterId() ?? "";
+  const scopeId = useScopeId();
+  const students = useQuery(studentsQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
+  const reports = useQuery(reportsQuery(scopeId));
   const crud = useCrud("reports", "Report");
 
   const [type, setType] = useState<ReportType>("student");

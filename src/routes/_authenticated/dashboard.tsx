@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   Activity,
@@ -33,8 +33,24 @@ import {
   subjectsQuery,
   teachersQuery,
 } from "@/lib/api";
+import { useScopeId } from "@/hooks/useCenterScope";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  beforeLoad: async () => {
+    // Center admins always work inside their own center workspace.
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) return;
+    const [{ data: roles }, { data: profile }] = await Promise.all([
+      supabase.from("user_roles").select("role").eq("user_id", auth.user.id),
+      supabase.from("profiles").select("center_id").eq("id", auth.user.id).maybeSingle(),
+    ]);
+    const isSuperAdmin = (roles ?? []).some((row) => row.role === "super_admin");
+    if (!isSuperAdmin && profile?.center_id) {
+      throw redirect({ to: "/centers/$centerId", params: { centerId: profile.center_id } });
+    }
+  },
+
   head: () => ({
     meta: [
       { title: "Dashboard — Center Management System" },
@@ -51,10 +67,11 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function DashboardPage() {
   const { profile } = useAuth();
-  const students = useQuery(studentsQuery);
-  const teachers = useQuery(teachersQuery);
-  const subjects = useQuery(subjectsQuery);
-  const activity = useQuery(activityQuery);
+  const scopeId = useScopeId();
+  const students = useQuery(studentsQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const activity = useQuery(activityQuery(scopeId));
 
   const isLoading = students.isLoading || teachers.isLoading || subjects.isLoading;
   const stats = buildStats(students.data ?? [], teachers.data ?? [], subjects.data ?? []);

@@ -44,8 +44,9 @@ import {
   teacherSubjectsQuery,
   teachersQuery,
 } from "@/lib/api";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/teachers/$teacherId")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/teachers/$teacherId")({
   head: () => ({
     meta: [
       { title: "Teacher profile — Center Management System" },
@@ -73,16 +74,18 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 }
 
 function TeacherDetailPage() {
-  const { teacherId } = useParams({ from: "/_authenticated/teachers/$teacherId" });
-  const teachers = useQuery(teachersQuery);
-  const teacherSubjects = useQuery(teacherSubjectsQuery);
-  const studentSubjects = useQuery(studentSubjectsQuery);
-  const students = useQuery(studentsQuery);
-  const subjects = useQuery(subjectsQuery);
-  const grades = useQuery(gradesQuery);
-  const centers = useQuery(centersQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const attendance = useQuery(attendanceQuery);
+  const { teacherId } = useParams({ from: "/_authenticated/centers/$centerId/teachers/$teacherId" });
+  const centerId = useWorkspaceCenterId() ?? "";
+  const scopeId = useScopeId();
+  const teachers = useQuery(teachersQuery(scopeId));
+  const teacherSubjects = useQuery(teacherSubjectsQuery(scopeId));
+  const studentSubjects = useQuery(studentSubjectsQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
 
   const teacher = teachers.data?.find((row) => row.id === teacherId) ?? null;
 
@@ -188,7 +191,7 @@ function TeacherDetailPage() {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link to="/teachers">
+        <Link to="/centers/$centerId/teachers" params={{ centerId }}>
           <ArrowLeft className="size-4" /> Back to teachers
         </Link>
       </Button>
@@ -307,8 +310,8 @@ function TeacherDetailPage() {
                       <TableRow key={student.id}>
                         <TableCell className="font-medium">
                           <Link
-                            to="/students/$studentId"
-                            params={{ studentId: student.id }}
+                            to="/centers/$centerId/students/$studentId"
+                            params={{ centerId, studentId: student.id }}
                             className="hover:underline"
                           >
                             {fullName(student)}

@@ -37,7 +37,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/hooks/useAuth";
 import {
   assessmentsQuery,
   attendanceQuery,
@@ -49,8 +48,9 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { Assessment, AttendanceStatus } from "@/lib/types";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/progress")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/progress")({
   head: () => ({
     meta: [
       { title: "Progress — Center Management System" },
@@ -115,11 +115,12 @@ const emptyAttendance = (): AttendanceForm => ({
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function ProgressPage() {
-  const { centerId } = useAuth();
-  const students = useQuery(studentsQuery);
-  const subjects = useQuery(subjectsQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const attendance = useQuery(attendanceQuery);
+  const centerId = useWorkspaceCenterId() ?? "";
+  const scopeId = useScopeId();
+  const students = useQuery(studentsQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
 
   const examCrud = useCrud("assessments", "Exam score");
   const attendanceCrud = useCrud("attendance", "Attendance record");

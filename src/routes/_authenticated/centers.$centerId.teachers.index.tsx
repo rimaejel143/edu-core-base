@@ -40,8 +40,9 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { RecordStatus, Teacher } from "@/lib/types";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/teachers/")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/teachers/")({
   head: () => ({
     meta: [
       { title: "Teachers — Center Management System" },
@@ -76,16 +77,17 @@ interface TeacherForm {
 const today = () => new Date().toISOString().slice(0, 10);
 
 function TeachersPage() {
-  const { centerId: myCenterId } = useAuth();
-  const teachers = useQuery(teachersQuery);
-  const centers = useQuery(centersQuery);
-  const subjects = useQuery(subjectsQuery);
-  const grades = useQuery(gradesQuery);
-  const links = useQuery(teacherSubjectsQuery);
+  const centerId = useWorkspaceCenterId() ?? "";
+  const scopeId = useScopeId();
+  const teachers = useQuery(teachersQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const links = useQuery(teacherSubjectsQuery(scopeId));
   const crud = useCrud("teachers", "Teacher");
   const linkCrud = useCrud("teacher_subjects", "Assignment");
 
-  const defaultCenter = myCenterId ?? centers.data?.[0]?.id ?? "";
+  const defaultCenter = centerId;
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Teacher | null>(null);
   const [form, setForm] = useState<TeacherForm>({
@@ -205,10 +207,6 @@ function TeachersPage() {
     setAssignFor(null);
   };
 
-  const centerOptions = (centers.data ?? []).map((center) => ({
-    value: center.id,
-    label: center.name,
-  }));
 
   return (
     <>
@@ -256,8 +254,8 @@ function TeachersPage() {
                     <TableRow key={teacher.id}>
                       <TableCell className="font-medium">
                         <Link
-                          to="/teachers/$teacherId"
-                          params={{ teacherId: teacher.id }}
+                          to="/centers/$centerId/teachers/$teacherId"
+                          params={{ centerId, teacherId: teacher.id }}
                           className="hover:underline"
                         >
                           {fullName(teacher)}
@@ -286,7 +284,7 @@ function TeachersPage() {
                       <TableCell className="text-right">
                         <RowActions>
                           <ActionItem asChild>
-                            <Link to="/teachers/$teacherId" params={{ teacherId: teacher.id }}>
+                            <Link to="/centers/$centerId/teachers/$teacherId" params={{ centerId, teacherId: teacher.id }}>
                               <Eye className="size-4" /> View profile
                             </Link>
                           </ActionItem>
@@ -373,14 +371,6 @@ function TeachersPage() {
               type="date"
               value={form.hire_date}
               onChange={(event) => setForm({ ...form, hire_date: event.target.value })}
-            />
-          </Field>
-          <Field label="Center">
-            <SelectField
-              value={form.center_id}
-              onChange={(value) => setForm({ ...form, center_id: value })}
-              placeholder="Select center"
-              options={centerOptions}
             />
           </Field>
           <Field label="Status">

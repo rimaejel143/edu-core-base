@@ -40,8 +40,9 @@ import {
   teacherSubjectsQuery,
   teachersQuery,
 } from "@/lib/api";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/classes/$gradeId")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/classes/$gradeId")({
   head: () => ({
     meta: [
       { title: "Class overview — Center Management System" },
@@ -60,17 +61,19 @@ export const Route = createFileRoute("/_authenticated/classes/$gradeId")({
 });
 
 function ClassDetailPage() {
-  const { gradeId } = useParams({ from: "/_authenticated/classes/$gradeId" });
-  const grades = useQuery(gradesQuery);
-  const centers = useQuery(centersQuery);
-  const students = useQuery(studentsQuery);
-  const subjects = useQuery(subjectsQuery);
-  const subjectGrades = useQuery(subjectGradesQuery);
-  const teachers = useQuery(teachersQuery);
-  const teacherSubjects = useQuery(teacherSubjectsQuery);
-  const studentSubjects = useQuery(studentSubjectsQuery);
-  const assessments = useQuery(assessmentsQuery);
-  const attendance = useQuery(attendanceQuery);
+  const { gradeId } = useParams({ from: "/_authenticated/centers/$centerId/classes/$gradeId" });
+  const centerId = useWorkspaceCenterId() ?? "";
+  const scopeId = useScopeId();
+  const grades = useQuery(gradesQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const subjectGrades = useQuery(subjectGradesQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const teacherSubjects = useQuery(teacherSubjectsQuery(scopeId));
+  const studentSubjects = useQuery(studentSubjectsQuery(scopeId));
+  const assessments = useQuery(assessmentsQuery(scopeId));
+  const attendance = useQuery(attendanceQuery(scopeId));
 
   const grade = grades.data?.find((row) => row.id === gradeId) ?? null;
 
@@ -135,7 +138,7 @@ function ClassDetailPage() {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link to="/subjects">
+        <Link to="/centers/$centerId/subjects" params={{ centerId }}>
           <ArrowLeft className="size-4" /> Back to subjects & classes
         </Link>
       </Button>
@@ -244,8 +247,8 @@ function ClassDetailPage() {
                     <TableRow key={student.id}>
                       <TableCell className="font-medium">
                         <Link
-                          to="/students/$studentId"
-                          params={{ studentId: student.id }}
+                          to="/centers/$centerId/students/$studentId"
+                          params={{ centerId, studentId: student.id }}
                           className="hover:underline"
                         >
                           {fullName(student)}
@@ -291,8 +294,8 @@ function ClassDetailPage() {
               {classTeachers.map((teacher) => (
                 <Link
                   key={teacher.id}
-                  to="/teachers/$teacherId"
-                  params={{ teacherId: teacher.id }}
+                  to="/centers/$centerId/teachers/$teacherId"
+                  params={{ centerId, teacherId: teacher.id }}
                   className="rounded-lg border border-border p-4 transition-colors hover:bg-muted/60"
                 >
                   <p className="font-display text-sm font-semibold">{fullName(teacher)}</p>

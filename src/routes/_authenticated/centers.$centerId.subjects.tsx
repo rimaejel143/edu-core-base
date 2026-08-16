@@ -31,8 +31,9 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { Grade, RecordStatus, Subject } from "@/lib/types";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/subjects")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/subjects")({
   head: () => ({
     meta: [
       { title: "Subjects & Grades — Center Management System" },
@@ -54,16 +55,17 @@ const STATUS_OPTIONS: { value: RecordStatus; label: string }[] = [
 ];
 
 function SubjectsPage() {
-  const { centerId: myCenterId } = useAuth();
-  const subjects = useQuery(subjectsQuery);
-  const grades = useQuery(gradesQuery);
-  const centers = useQuery(centersQuery);
-  const students = useQuery(studentsQuery);
-  const subjectGrades = useQuery(subjectGradesQuery);
+  const centerId = useWorkspaceCenterId() ?? "";
+  const scopeId = useScopeId();
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const subjectGrades = useQuery(subjectGradesQuery(scopeId));
   const subjectCrud = useCrud("subjects", "Subject");
   const gradeCrud = useCrud("grades", "Grade");
 
-  const defaultCenter = myCenterId ?? centers.data?.[0]?.id ?? "";
+  const defaultCenter = centerId;
 
   const [gradeOpen, setGradeOpen] = useState(false);
   const [editingGrade, setEditingGrade] = useState<Grade | null>(null);
@@ -88,10 +90,6 @@ function SubjectsPage() {
 
   const centerName = (id: string) =>
     centers.data?.find((center) => center.id === id)?.name ?? "—";
-  const centerOptions = (centers.data ?? []).map((center) => ({
-    value: center.id,
-    label: center.name,
-  }));
 
   const gradesForSubject = (subjectId: string) =>
     (subjectGrades.data ?? [])
@@ -248,8 +246,8 @@ function SubjectsPage() {
                 >
                   <div className="min-w-0">
                     <Link
-                      to="/classes/$gradeId"
-                      params={{ gradeId: grade.id }}
+                      to="/centers/$centerId/classes/$gradeId"
+                      params={{ centerId, gradeId: grade.id }}
                       className="font-display text-sm font-semibold hover:underline"
                     >
                       {grade.name}
@@ -381,14 +379,6 @@ function SubjectsPage() {
               }
             />
           </Field>
-          <Field label="Center">
-            <SelectField
-              value={gradeForm.center_id}
-              onChange={(value) => setGradeForm({ ...gradeForm, center_id: value })}
-              placeholder="Select center"
-              options={centerOptions}
-            />
-          </Field>
           <Field label="Status">
             <SelectField
               value={gradeForm.status}
@@ -427,14 +417,6 @@ function SubjectsPage() {
             <Input
               value={subjectForm.level}
               onChange={(event) => setSubjectForm({ ...subjectForm, level: event.target.value })}
-            />
-          </Field>
-          <Field label="Center">
-            <SelectField
-              value={subjectForm.center_id}
-              onChange={(value) => setSubjectForm({ ...subjectForm, center_id: value })}
-              placeholder="Select center"
-              options={centerOptions}
             />
           </Field>
           <Field label="Status">

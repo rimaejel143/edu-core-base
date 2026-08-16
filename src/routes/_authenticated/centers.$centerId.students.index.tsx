@@ -36,8 +36,9 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { Student, StudentStatus } from "@/lib/types";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/students/")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/students/")({
   head: () => ({
     meta: [
       { title: "Students — Center Management System" },
@@ -94,10 +95,12 @@ function emptyForm(centerId: string): StudentForm {
 }
 
 function StudentsPage() {
-  const { centerId: myCenterId, isSuperAdmin } = useAuth();
-  const students = useQuery(studentsQuery);
-  const centers = useQuery(centersQuery);
-  const grades = useQuery(gradesQuery);
+  const { isSuperAdmin } = useAuth();
+  const centerId = useWorkspaceCenterId() ?? "";
+  const scopeId = useScopeId();
+  const students = useQuery(studentsQuery(scopeId));
+  const centers = useQuery(centersQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
   const crud = useCrud("students", "Student");
 
   const [search, setSearch] = useState("");
@@ -107,7 +110,7 @@ function StudentsPage() {
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Student | null>(null);
-  const defaultCenter = myCenterId ?? centers.data?.[0]?.id ?? "";
+  const defaultCenter = centerId;
   const [form, setForm] = useState<StudentForm>(() => emptyForm(""));
 
   const gradeName = (id: string | null) =>
@@ -290,8 +293,8 @@ function StudentsPage() {
                       <TableCell className="font-mono text-xs">{student.student_code}</TableCell>
                       <TableCell className="font-medium">
                         <Link
-                          to="/students/$studentId"
-                          params={{ studentId: student.id }}
+                          to="/centers/$centerId/students/$studentId"
+                          params={{ centerId, studentId: student.id }}
                           className="hover:underline"
                         >
                           {fullName(student)}
@@ -317,7 +320,7 @@ function StudentsPage() {
                       <TableCell className="text-right">
                         <RowActions>
                           <ActionItem asChild>
-                            <Link to="/students/$studentId" params={{ studentId: student.id }}>
+                            <Link to="/centers/$centerId/students/$studentId" params={{ centerId, studentId: student.id }}>
                               <Eye className="size-4" /> View details
                             </Link>
                           </ActionItem>
@@ -408,14 +411,6 @@ function StudentsPage() {
               required
               value={form.registration_date}
               onChange={(event) => setForm({ ...form, registration_date: event.target.value })}
-            />
-          </Field>
-          <Field label="Center">
-            <SelectField
-              value={form.center_id}
-              onChange={(value) => setForm({ ...form, center_id: value, grade_id: "" })}
-              placeholder="Select center"
-              options={centerOptions}
             />
           </Field>
           <Field label="Grade / Class">

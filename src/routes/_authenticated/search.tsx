@@ -18,6 +18,7 @@ import {
   subjectsQuery,
   teachersQuery,
 } from "@/lib/api";
+import { useScopeId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/search")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -37,7 +38,10 @@ export const Route = createFileRoute("/_authenticated/search")({
       },
     ],
   }),
-  component: SearchPage,
+  component: function GlobalSearchRoute() {
+    const { q } = Route.useSearch();
+    return <SearchScreen q={q} />;
+  },
 });
 
 type ResultKind = "Center" | "Student" | "Teacher" | "Class" | "Subject" | "Admin";
@@ -58,17 +62,17 @@ function matches(term: string, values: (string | null | undefined)[]) {
     .some((value) => String(value).toLowerCase().includes(term));
 }
 
-function SearchPage() {
-  const { q } = Route.useSearch();
+export function SearchScreen({ q }: { q: string }) {
   const { isSuperAdmin } = useAuth();
   const [term, setTerm] = useState(q);
 
-  const centers = useQuery(centersQuery);
-  const students = useQuery(studentsQuery);
-  const teachers = useQuery(teachersQuery);
-  const grades = useQuery(gradesQuery);
-  const subjects = useQuery(subjectsQuery);
-  const profiles = useQuery(profilesQuery);
+  const scopeId = useScopeId();
+  const centers = useQuery(centersQuery(scopeId));
+  const students = useQuery(studentsQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const grades = useQuery(gradesQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const profiles = useQuery(profilesQuery(scopeId));
 
   const isLoading =
     centers.isLoading ||
@@ -130,8 +134,8 @@ function SearchPage() {
           name: fullName(student),
           center: centerName(student.center_id),
           detail: `${student.student_code ?? "—"} · ${student.email ?? student.phone ?? "no contact"}`,
-          to: "/students/$studentId",
-          params: { studentId: student.id },
+          to: "/centers/$centerId/students/$studentId",
+          params: { centerId: student.center_id, studentId: student.id },
         });
       }
     }
@@ -152,8 +156,8 @@ function SearchPage() {
           name: fullName(teacher),
           center: centerName(teacher.center_id),
           detail: `${teacher.teacher_code ?? "—"} · ${teacher.specialization ?? "staff"}`,
-          to: "/teachers/$teacherId",
-          params: { teacherId: teacher.id },
+          to: "/centers/$centerId/teachers/$teacherId",
+          params: { centerId: teacher.center_id, teacherId: teacher.id },
         });
       }
     }
@@ -166,8 +170,8 @@ function SearchPage() {
           name: grade.name,
           center: centerName(grade.center_id),
           detail: grade.room ? `Room ${grade.room}` : "Class group",
-          to: "/classes/$gradeId",
-          params: { gradeId: grade.id },
+          to: "/centers/$centerId/classes/$gradeId",
+          params: { centerId: grade.center_id, gradeId: grade.id },
         });
       }
     }
@@ -180,7 +184,8 @@ function SearchPage() {
           name: subject.name,
           center: centerName(subject.center_id),
           detail: `${subject.code ?? "—"} · ${subject.level ?? "all levels"}`,
-          to: "/subjects",
+          to: "/centers/$centerId/subjects",
+          params: { centerId: subject.center_id },
         });
       }
     }
