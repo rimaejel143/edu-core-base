@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   formatDate,
@@ -41,6 +40,7 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { RecordStatus, Teacher } from "@/lib/types";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/centers/$centerId/teachers/")({
   head: () => ({

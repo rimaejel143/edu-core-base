@@ -37,7 +37,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 import {
   assessmentsQuery,
   attendanceQuery,
@@ -49,6 +48,7 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { Assessment, AttendanceStatus } from "@/lib/types";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/centers/$centerId/progress")({
   head: () => ({

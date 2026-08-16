@@ -9,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
-import { useScopeId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   fullName,
@@ -19,6 +18,7 @@ import {
   subjectsQuery,
   teachersQuery,
 } from "@/lib/api";
+import { useScopeId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/search")({
   validateSearch: (search: Record<string, unknown>) => ({

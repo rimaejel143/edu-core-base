@@ -22,7 +22,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   gradesQuery,
@@ -32,6 +31,7 @@ import {
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { Grade, RecordStatus, Subject } from "@/lib/types";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/centers/$centerId/subjects")({
   head: () => ({

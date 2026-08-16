@@ -35,7 +35,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-import { useScopeId } from "@/hooks/useCenterScope";
   activityQuery,
   assessmentsQuery,
   attendanceQuery,
@@ -51,6 +50,7 @@ import { useScopeId } from "@/hooks/useCenterScope";
   subjectsQuery,
   teachersQuery,
 } from "@/lib/api";
+import { useScopeId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/centers/$centerId/")({
   head: () => ({

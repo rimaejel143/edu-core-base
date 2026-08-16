@@ -22,7 +22,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
-import { useScopeId } from "@/hooks/useCenterScope";
 import {
   activityQuery,
   buildRegistrationSeries,
@@ -34,6 +33,7 @@ import {
   subjectsQuery,
   teachersQuery,
 } from "@/lib/api";
+import { useScopeId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
