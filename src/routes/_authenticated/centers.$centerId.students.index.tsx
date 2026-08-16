@@ -27,7 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
-import { useScopeId } from "@/hooks/useCenterScope";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   formatDate,
@@ -95,7 +95,8 @@ function emptyForm(centerId: string): StudentForm {
 }
 
 function StudentsPage() {
-  const { centerId: myCenterId, isSuperAdmin } = useAuth();
+  const { isSuperAdmin } = useAuth();
+  const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const students = useQuery(studentsQuery(scopeId));
   const centers = useQuery(centersQuery(scopeId));
@@ -109,7 +110,7 @@ function StudentsPage() {
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Student | null>(null);
-  const defaultCenter = myCenterId ?? centers.data?.[0]?.id ?? "";
+  const defaultCenter = centerId;
   const [form, setForm] = useState<StudentForm>(() => emptyForm(""));
 
   const gradeName = (id: string | null) =>
@@ -410,14 +411,6 @@ function StudentsPage() {
               required
               value={form.registration_date}
               onChange={(event) => setForm({ ...form, registration_date: event.target.value })}
-            />
-          </Field>
-          <Field label="Center">
-            <SelectField
-              value={form.center_id}
-              onChange={(value) => setForm({ ...form, center_id: value, grade_id: "" })}
-              placeholder="Select center"
-              options={centerOptions}
             />
           </Field>
           <Field label="Grade / Class">

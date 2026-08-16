@@ -24,8 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAuth } from "@/hooks/useAuth";
-import { useScopeId } from "@/hooks/useCenterScope";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 import {
   assessmentsQuery,
   attendanceQuery,
@@ -110,7 +109,7 @@ function printAsPdf(title: string, rows: Record<string, string | number>[]) {
 }
 
 function ReportsPage() {
-  const { centerId } = useAuth();
+  const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const students = useQuery(studentsQuery(scopeId));
   const teachers = useQuery(teachersQuery(scopeId));

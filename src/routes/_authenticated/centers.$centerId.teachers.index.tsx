@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useScopeId } from "@/hooks/useCenterScope";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   formatDate,
@@ -77,7 +77,7 @@ interface TeacherForm {
 const today = () => new Date().toISOString().slice(0, 10);
 
 function TeachersPage() {
-  const { centerId: myCenterId } = useAuth();
+  const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const teachers = useQuery(teachersQuery(scopeId));
   const centers = useQuery(centersQuery(scopeId));
@@ -87,7 +87,7 @@ function TeachersPage() {
   const crud = useCrud("teachers", "Teacher");
   const linkCrud = useCrud("teacher_subjects", "Assignment");
 
-  const defaultCenter = myCenterId ?? centers.data?.[0]?.id ?? "";
+  const defaultCenter = centerId;
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Teacher | null>(null);
   const [form, setForm] = useState<TeacherForm>({
@@ -375,14 +375,6 @@ function TeachersPage() {
               type="date"
               value={form.hire_date}
               onChange={(event) => setForm({ ...form, hire_date: event.target.value })}
-            />
-          </Field>
-          <Field label="Center">
-            <SelectField
-              value={form.center_id}
-              onChange={(value) => setForm({ ...form, center_id: value })}
-              placeholder="Select center"
-              options={centerOptions}
             />
           </Field>
           <Field label="Status">

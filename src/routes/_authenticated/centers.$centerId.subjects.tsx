@@ -22,7 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useScopeId } from "@/hooks/useCenterScope";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 import {
   centersQuery,
   gradesQuery,
@@ -55,7 +55,7 @@ const STATUS_OPTIONS: { value: RecordStatus; label: string }[] = [
 ];
 
 function SubjectsPage() {
-  const { centerId: myCenterId } = useAuth();
+  const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const subjects = useQuery(subjectsQuery(scopeId));
   const grades = useQuery(gradesQuery(scopeId));
@@ -65,7 +65,7 @@ function SubjectsPage() {
   const subjectCrud = useCrud("subjects", "Subject");
   const gradeCrud = useCrud("grades", "Grade");
 
-  const defaultCenter = myCenterId ?? centers.data?.[0]?.id ?? "";
+  const defaultCenter = centerId;
 
   const [gradeOpen, setGradeOpen] = useState(false);
   const [editingGrade, setEditingGrade] = useState<Grade | null>(null);
@@ -383,14 +383,6 @@ function SubjectsPage() {
               }
             />
           </Field>
-          <Field label="Center">
-            <SelectField
-              value={gradeForm.center_id}
-              onChange={(value) => setGradeForm({ ...gradeForm, center_id: value })}
-              placeholder="Select center"
-              options={centerOptions}
-            />
-          </Field>
           <Field label="Status">
             <SelectField
               value={gradeForm.status}
@@ -429,14 +421,6 @@ function SubjectsPage() {
             <Input
               value={subjectForm.level}
               onChange={(event) => setSubjectForm({ ...subjectForm, level: event.target.value })}
-            />
-          </Field>
-          <Field label="Center">
-            <SelectField
-              value={subjectForm.center_id}
-              onChange={(value) => setSubjectForm({ ...subjectForm, center_id: value })}
-              placeholder="Select center"
-              options={centerOptions}
             />
           </Field>
           <Field label="Status">

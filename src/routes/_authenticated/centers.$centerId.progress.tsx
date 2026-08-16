@@ -37,8 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/hooks/useAuth";
-import { useScopeId } from "@/hooks/useCenterScope";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 import {
   assessmentsQuery,
   attendanceQuery,
@@ -116,7 +115,7 @@ const emptyAttendance = (): AttendanceForm => ({
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function ProgressPage() {
-  const { centerId } = useAuth();
+  const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const students = useQuery(studentsQuery(scopeId));
   const subjects = useQuery(subjectsQuery(scopeId));
