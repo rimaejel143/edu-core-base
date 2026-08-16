@@ -38,7 +38,10 @@ export const Route = createFileRoute("/_authenticated/search")({
       },
     ],
   }),
-  component: SearchPage,
+  component: function GlobalSearchRoute() {
+    const { q } = Route.useSearch();
+    return <SearchScreen q={q} />;
+  },
 });
 
 type ResultKind = "Center" | "Student" | "Teacher" | "Class" | "Subject" | "Admin";
@@ -59,8 +62,7 @@ function matches(term: string, values: (string | null | undefined)[]) {
     .some((value) => String(value).toLowerCase().includes(term));
 }
 
-function SearchPage() {
-  const { q } = Route.useSearch();
+export function SearchScreen({ q }: { q: string }) {
   const { isSuperAdmin } = useAuth();
   const [term, setTerm] = useState(q);
 
