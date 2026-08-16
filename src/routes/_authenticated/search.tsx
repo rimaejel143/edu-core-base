@@ -134,8 +134,8 @@ export function SearchScreen({ q }: { q: string }) {
           name: fullName(student),
           center: centerName(student.center_id),
           detail: `${student.student_code ?? "—"} · ${student.email ?? student.phone ?? "no contact"}`,
-          to: "/students/$studentId",
-          params: { studentId: student.id },
+          to: "/centers/$centerId/students/$studentId",
+          params: { centerId: student.center_id, studentId: student.id },
         });
       }
     }
@@ -156,8 +156,8 @@ export function SearchScreen({ q }: { q: string }) {
           name: fullName(teacher),
           center: centerName(teacher.center_id),
           detail: `${teacher.teacher_code ?? "—"} · ${teacher.specialization ?? "staff"}`,
-          to: "/teachers/$teacherId",
-          params: { teacherId: teacher.id },
+          to: "/centers/$centerId/teachers/$teacherId",
+          params: { centerId: teacher.center_id, teacherId: teacher.id },
         });
       }
     }
@@ -170,8 +170,8 @@ export function SearchScreen({ q }: { q: string }) {
           name: grade.name,
           center: centerName(grade.center_id),
           detail: grade.room ? `Room ${grade.room}` : "Class group",
-          to: "/classes/$gradeId",
-          params: { gradeId: grade.id },
+          to: "/centers/$centerId/classes/$gradeId",
+          params: { centerId: grade.center_id, gradeId: grade.id },
         });
       }
     }
@@ -184,7 +184,8 @@ export function SearchScreen({ q }: { q: string }) {
           name: subject.name,
           center: centerName(subject.center_id),
           detail: `${subject.code ?? "—"} · ${subject.level ?? "all levels"}`,
-          to: "/subjects",
+          to: "/centers/$centerId/subjects",
+          params: { centerId: subject.center_id },
         });
       }
     }
