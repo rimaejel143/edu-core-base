@@ -28,7 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-import { useScopeId } from "@/hooks/useCenterScope";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
   assessmentsQuery,
   attendanceQuery,
   attendanceRate,
@@ -75,6 +75,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 
 function TeacherDetailPage() {
   const { teacherId } = useParams({ from: "/_authenticated/centers/$centerId/teachers/$teacherId" });
+  const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const teachers = useQuery(teachersQuery(scopeId));
   const teacherSubjects = useQuery(teacherSubjectsQuery(scopeId));
@@ -190,7 +191,7 @@ function TeacherDetailPage() {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link to="/centers/$centerId/teachers">
+        <Link to="/centers/$centerId/teachers" params={{ centerId }}>
           <ArrowLeft className="size-4" /> Back to teachers
         </Link>
       </Button>
@@ -310,7 +311,7 @@ function TeacherDetailPage() {
                         <TableCell className="font-medium">
                           <Link
                             to="/centers/$centerId/students/$studentId"
-                            params={{ studentId: student.id }}
+                            params={{ centerId, studentId: student.id }}
                             className="hover:underline"
                           >
                             {fullName(student)}

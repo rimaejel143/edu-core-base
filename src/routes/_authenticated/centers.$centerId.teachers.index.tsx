@@ -259,7 +259,7 @@ function TeachersPage() {
                       <TableCell className="font-medium">
                         <Link
                           to="/centers/$centerId/teachers/$teacherId"
-                          params={{ teacherId: teacher.id }}
+                          params={{ centerId, teacherId: teacher.id }}
                           className="hover:underline"
                         >
                           {fullName(teacher)}
@@ -288,7 +288,7 @@ function TeachersPage() {
                       <TableCell className="text-right">
                         <RowActions>
                           <ActionItem asChild>
-                            <Link to="/centers/$centerId/teachers/$teacherId" params={{ teacherId: teacher.id }}>
+                            <Link to="/centers/$centerId/teachers/$teacherId" params={{ centerId, teacherId: teacher.id }}>
                               <Eye className="size-4" /> View profile
                             </Link>
                           </ActionItem>

@@ -258,7 +258,7 @@ function CenterProfilePage() {
                           <TableCell className="font-medium">
                             <Link
                               to="/centers/$centerId/students/$studentId"
-                              params={{ studentId: student.id }}
+                              params={{ centerId, studentId: student.id }}
                               className="hover:underline"
                             >
                               {fullName(student)}

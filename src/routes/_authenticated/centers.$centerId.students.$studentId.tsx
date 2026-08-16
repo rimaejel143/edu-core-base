@@ -42,7 +42,7 @@ import {
 import { useCrud } from "@/lib/crud";
 import { BookOpen, FileText, GraduationCap, LineChart, StickyNote } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useScopeId } from "@/hooks/useCenterScope";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
 export const Route = createFileRoute("/_authenticated/centers/$centerId/students/$studentId")({
   head: () => ({
@@ -70,6 +70,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 
 function StudentDetailPage() {
   const { studentId } = useParams({ from: "/_authenticated/centers/$centerId/students/$studentId" });
+  const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const student = useQuery(studentQuery(studentId));
   const subjects = useQuery(subjectsQuery(scopeId));
@@ -188,7 +189,7 @@ function StudentDetailPage() {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link to="/centers/$centerId/students">
+        <Link to="/centers/$centerId/students" params={{ centerId }}>
           <ArrowLeft className="size-4" /> Back to students
         </Link>
       </Button>

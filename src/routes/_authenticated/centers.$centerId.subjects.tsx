@@ -251,7 +251,7 @@ function SubjectsPage() {
                   <div className="min-w-0">
                     <Link
                       to="/centers/$centerId/classes/$gradeId"
-                      params={{ gradeId: grade.id }}
+                      params={{ centerId, gradeId: grade.id }}
                       className="font-display text-sm font-semibold hover:underline"
                     >
                       {grade.name}

@@ -26,7 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-import { useScopeId } from "@/hooks/useCenterScope";
+import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
   assessmentsQuery,
   attendanceQuery,
   attendanceRate,
@@ -62,6 +62,7 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/classes/
 
 function ClassDetailPage() {
   const { gradeId } = useParams({ from: "/_authenticated/centers/$centerId/classes/$gradeId" });
+  const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const grades = useQuery(gradesQuery(scopeId));
   const centers = useQuery(centersQuery(scopeId));
@@ -137,7 +138,7 @@ function ClassDetailPage() {
   return (
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
-        <Link to="/centers/$centerId/subjects">
+        <Link to="/centers/$centerId/subjects" params={{ centerId }}>
           <ArrowLeft className="size-4" /> Back to subjects & classes
         </Link>
       </Button>
@@ -247,7 +248,7 @@ function ClassDetailPage() {
                       <TableCell className="font-medium">
                         <Link
                           to="/centers/$centerId/students/$studentId"
-                          params={{ studentId: student.id }}
+                          params={{ centerId, studentId: student.id }}
                           className="hover:underline"
                         >
                           {fullName(student)}
@@ -294,7 +295,7 @@ function ClassDetailPage() {
                 <Link
                   key={teacher.id}
                   to="/centers/$centerId/teachers/$teacherId"
-                  params={{ teacherId: teacher.id }}
+                  params={{ centerId, teacherId: teacher.id }}
                   className="rounded-lg border border-border p-4 transition-colors hover:bg-muted/60"
                 >
                   <p className="font-display text-sm font-semibold">{fullName(teacher)}</p>
