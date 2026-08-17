@@ -33,15 +33,15 @@ import { useCrud } from "@/lib/crud";
 import type { Grade, RecordStatus, Subject } from "@/lib/types";
 import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/centers/$centerId/subjects")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/subjects/")({
   head: () => ({
     meta: [
       { title: "Subjects & Grades — Center Management System" },
-      { name: "description", content: "Grades, classes and subjects offered by your center." },
+      { name: "description", content: "Grades and subjects offered by your center." },
       { property: "og:title", content: "Subjects & Grades — Center Management System" },
       {
         property: "og:description",
-        content: "Grades, classes and subjects offered by your center.",
+        content: "Grades and subjects offered by your center.",
       },
     ],
   }),
@@ -81,15 +81,13 @@ function SubjectsPage() {
   const [subjectForm, setSubjectForm] = useState({
     name: "",
     code: "",
-    level: "",
     description: "",
     center_id: "",
     status: "active" as RecordStatus,
   });
   const [linkedGrades, setLinkedGrades] = useState<string[]>([]);
 
-  const centerName = (id: string) =>
-    centers.data?.find((center) => center.id === id)?.name ?? "—";
+  const centerName = (id: string) => centers.data?.find((center) => center.id === id)?.name ?? "—";
 
   const gradesForSubject = (subjectId: string) =>
     (subjectGrades.data ?? [])
@@ -135,7 +133,6 @@ function SubjectsPage() {
     setSubjectForm({
       name: "",
       code: "",
-      level: "",
       description: "",
       center_id: defaultCenter,
       status: "active",
@@ -149,7 +146,6 @@ function SubjectsPage() {
     setSubjectForm({
       name: subject.name,
       code: subject.code ?? "",
-      level: subject.level ?? "",
       description: subject.description ?? "",
       center_id: subject.center_id,
       status: subject.status,
@@ -185,7 +181,6 @@ function SubjectsPage() {
     const payload = {
       name: subjectForm.name.trim(),
       code: subjectForm.code.trim() || null,
-      level: subjectForm.level.trim() || null,
       description: subjectForm.description.trim() || null,
       center_id: subjectForm.center_id,
       status: subjectForm.status,
@@ -227,7 +222,7 @@ function SubjectsPage() {
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Layers className="size-4" /> Grades / Classes
+            <Layers className="size-4" /> Grades
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
@@ -246,7 +241,7 @@ function SubjectsPage() {
                 >
                   <div className="min-w-0">
                     <Link
-                      to="/centers/$centerId/classes/$gradeId"
+                      to="/centers/$centerId/grades/$gradeId"
                       params={{ centerId, gradeId: grade.id }}
                       className="font-display text-sm font-semibold hover:underline"
                     >
@@ -305,7 +300,13 @@ function SubjectsPage() {
               <CardContent className="p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className="font-display text-base font-semibold">{subject.name}</h3>
+                    <Link
+                      to="/centers/$centerId/subjects/$subjectId"
+                      params={{ centerId, subjectId: subject.id }}
+                      className="font-display text-base font-semibold hover:underline"
+                    >
+                      {subject.name}
+                    </Link>
                     <p className="mt-0.5 font-mono text-xs text-muted-foreground">
                       {subject.code ?? "—"}
                     </p>
@@ -374,17 +375,13 @@ function SubjectsPage() {
             <Input
               type="number"
               value={gradeForm.level_order}
-              onChange={(event) =>
-                setGradeForm({ ...gradeForm, level_order: event.target.value })
-              }
+              onChange={(event) => setGradeForm({ ...gradeForm, level_order: event.target.value })}
             />
           </Field>
           <Field label="Status">
             <SelectField
               value={gradeForm.status}
-              onChange={(value) =>
-                setGradeForm({ ...gradeForm, status: value as RecordStatus })
-              }
+              onChange={(value) => setGradeForm({ ...gradeForm, status: value as RecordStatus })}
               options={STATUS_OPTIONS}
             />
           </Field>
@@ -411,12 +408,6 @@ function SubjectsPage() {
             <Input
               value={subjectForm.code}
               onChange={(event) => setSubjectForm({ ...subjectForm, code: event.target.value })}
-            />
-          </Field>
-          <Field label="Level">
-            <Input
-              value={subjectForm.level}
-              onChange={(event) => setSubjectForm({ ...subjectForm, level: event.target.value })}
             />
           </Field>
           <Field label="Status">
@@ -448,9 +439,7 @@ function SubjectsPage() {
                     checked={linkedGrades.includes(grade.id)}
                     onCheckedChange={(checked) =>
                       setLinkedGrades((current) =>
-                        checked
-                          ? [...current, grade.id]
-                          : current.filter((id) => id !== grade.id),
+                        checked ? [...current, grade.id] : current.filter((id) => id !== grade.id),
                       )
                     }
                   />

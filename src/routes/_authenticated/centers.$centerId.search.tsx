@@ -11,12 +11,12 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/search")
       { title: "Center search — Center Management System" },
       {
         name: "description",
-        content: "Search students, teachers, classes and subjects inside this center.",
+        content: "Search students, teachers, grades and subjects inside this center.",
       },
       { property: "og:title", content: "Center search — Center Management System" },
       {
         property: "og:description",
-        content: "Search students, teachers, classes and subjects inside this center.",
+        content: "Search students, teachers, grades and subjects inside this center.",
       },
     ],
   }),

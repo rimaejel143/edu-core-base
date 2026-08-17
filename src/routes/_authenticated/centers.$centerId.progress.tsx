@@ -205,7 +205,6 @@ function ProgressPage() {
       });
     }
     return series;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredExams]);
 
   const subjectSeries = (subjects.data ?? []).map((subject) => ({
@@ -434,9 +433,7 @@ function ProgressPage() {
                     {filteredAttendance.slice(0, 100).map((row) => (
                       <TableRow key={row.id}>
                         <TableCell>{formatDate(row.session_date)}</TableCell>
-                        <TableCell className="font-medium">
-                          {studentName(row.student_id)}
-                        </TableCell>
+                        <TableCell className="font-medium">{studentName(row.student_id)}</TableCell>
                         <TableCell className="hidden md:table-cell">
                           {subjectName(row.subject_id)}
                         </TableCell>
@@ -646,7 +643,9 @@ function ProgressPage() {
           <Textarea
             rows={2}
             value={attendanceForm.notes}
-            onChange={(event) => setAttendanceForm({ ...attendanceForm, notes: event.target.value })}
+            onChange={(event) =>
+              setAttendanceForm({ ...attendanceForm, notes: event.target.value })
+            }
           />
         </Field>
       </FormDialog>

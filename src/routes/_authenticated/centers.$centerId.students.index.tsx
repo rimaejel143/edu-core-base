@@ -16,6 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -26,13 +27,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import {
   centersQuery,
   formatDate,
   fullName,
   gradesQuery,
+  studentSubjectsQuery,
   studentsQuery,
+  subjectGradesQuery,
+  subjectsQuery,
+  teacherSubjectsQuery,
+  teachersQuery,
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import type { Student, StudentStatus } from "@/lib/types";
@@ -42,7 +49,10 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/students
   head: () => ({
     meta: [
       { title: "Students — Center Management System" },
-      { name: "description", content: "Browse and search every student registered at your center." },
+      {
+        name: "description",
+        content: "Browse and search every student registered at your center.",
+      },
       { property: "og:title", content: "Students — Center Management System" },
       {
         property: "og:description",
@@ -101,6 +111,11 @@ function StudentsPage() {
   const students = useQuery(studentsQuery(scopeId));
   const centers = useQuery(centersQuery(scopeId));
   const grades = useQuery(gradesQuery(scopeId));
+  const subjects = useQuery(subjectsQuery(scopeId));
+  const subjectGrades = useQuery(subjectGradesQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const assignments = useQuery(teacherSubjectsQuery(scopeId));
+  const enrolments = useQuery(studentSubjectsQuery(scopeId));
   const crud = useCrud("students", "Student");
 
   const [search, setSearch] = useState("");
@@ -112,11 +127,12 @@ function StudentsPage() {
   const [editing, setEditing] = useState<Student | null>(null);
   const defaultCenter = centerId;
   const [form, setForm] = useState<StudentForm>(() => emptyForm(""));
+  // subject id -> teacher id ("" = no teacher chosen yet)
+  const [enrol, setEnrol] = useState<Record<string, string>>({});
 
   const gradeName = (id: string | null) =>
     grades.data?.find((grade) => grade.id === id)?.name ?? "—";
-  const centerName = (id: string) =>
-    centers.data?.find((center) => center.id === id)?.name ?? "—";
+  const centerName = (id: string) => centers.data?.find((center) => center.id === id)?.name ?? "—";
 
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -140,14 +156,43 @@ function StudentsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [students.data, search, gradeFilter, centerFilter, statusFilter, grades.data, centers.data]);
 
+  // Subjects available in the selected grade: linked to the grade, or taught there.
+  const gradeSubjects = useMemo(() => {
+    if (!form.grade_id) return [];
+    const ids = new Set<string>([
+      ...(subjectGrades.data ?? [])
+        .filter((row) => row.grade_id === form.grade_id)
+        .map((row) => row.subject_id),
+      ...(assignments.data ?? [])
+        .filter((row) => row.grade_id === form.grade_id)
+        .map((row) => row.subject_id),
+    ]);
+    return (subjects.data ?? []).filter((subject) => ids.has(subject.id));
+  }, [form.grade_id, subjectGrades.data, assignments.data, subjects.data]);
+
+  const teachersFor = (subjectId: string) =>
+    (assignments.data ?? [])
+      .filter((row) => row.subject_id === subjectId && row.grade_id === form.grade_id)
+      .map((row) => {
+        const teacher = teachers.data?.find((item) => item.id === row.teacher_id);
+        return teacher ? { value: teacher.id, label: fullName(teacher) } : null;
+      })
+      .filter((option): option is { value: string; label: string } => option !== null);
+
   const openCreate = () => {
     setEditing(null);
+    setEnrol({});
     setForm(emptyForm(defaultCenter));
     setOpen(true);
   };
 
   const openEdit = (student: Student) => {
     setEditing(student);
+    const current: Record<string, string> = {};
+    for (const row of enrolments.data ?? []) {
+      if (row.student_id === student.id) current[row.subject_id] = row.teacher_id ?? "";
+    }
+    setEnrol(current);
     setForm({
       first_name: student.first_name,
       last_name: student.last_name,
@@ -181,10 +226,58 @@ function StudentsPage() {
       status: form.status,
     };
     const label = `${payload.first_name} ${payload.last_name}`.trim();
-    const ok = editing
-      ? await crud.update(editing.id, payload, `Student ${label} updated`)
-      : await crud.create(payload, `Student ${label} registered`);
-    if (ok) setOpen(false);
+
+    if (editing) {
+      const ok = await crud.update(editing.id, payload, `Student ${label} updated`);
+      if (!ok) return;
+      await syncEnrolments(editing.id, payload.center_id);
+      setOpen(false);
+      return;
+    }
+
+    const created = await crud.create(payload, `Student ${label} registered`);
+    if (!created) return;
+    const { data: row } = await supabase
+      .from("students")
+      .select("id")
+      .eq("center_id", payload.center_id)
+      .eq("first_name", payload.first_name)
+      .eq("last_name", payload.last_name)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (row?.id) await syncEnrolments(row.id, payload.center_id);
+    setOpen(false);
+  };
+
+  const syncEnrolments = async (studentId: string, studentCenter: string) => {
+    const current = (enrolments.data ?? []).filter((row) => row.student_id === studentId);
+    const selected = Object.keys(enrol);
+
+    for (const row of current) {
+      if (!selected.includes(row.subject_id)) {
+        await supabase.from("student_subjects").delete().eq("id", row.id);
+      }
+    }
+    for (const subjectId of selected) {
+      const existing = current.find((row) => row.subject_id === subjectId);
+      const teacherId = enrol[subjectId] || null;
+      if (existing) {
+        await supabase
+          .from("student_subjects")
+          .update({ teacher_id: teacherId, grade_id: form.grade_id || null })
+          .eq("id", existing.id);
+      } else {
+        await supabase.from("student_subjects").insert({
+          center_id: studentCenter,
+          student_id: studentId,
+          subject_id: subjectId,
+          teacher_id: teacherId,
+          grade_id: form.grade_id || null,
+        });
+      }
+    }
+    await enrolments.refetch();
   };
 
   const centerOptions = (centers.data ?? []).map((center) => ({
@@ -300,9 +393,7 @@ function StudentsPage() {
                           {fullName(student)}
                         </Link>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {student.email ?? "—"}
-                      </TableCell>
+                      <TableCell className="hidden md:table-cell">{student.email ?? "—"}</TableCell>
                       <TableCell className="hidden md:table-cell">
                         {gradeName(student.grade_id)}
                       </TableCell>
@@ -320,7 +411,10 @@ function StudentsPage() {
                       <TableCell className="text-right">
                         <RowActions>
                           <ActionItem asChild>
-                            <Link to="/centers/$centerId/students/$studentId" params={{ centerId, studentId: student.id }}>
+                            <Link
+                              to="/centers/$centerId/students/$studentId"
+                              params={{ centerId, studentId: student.id }}
+                            >
                               <Eye className="size-4" /> View details
                             </Link>
                           </ActionItem>
@@ -413,10 +507,13 @@ function StudentsPage() {
               onChange={(event) => setForm({ ...form, registration_date: event.target.value })}
             />
           </Field>
-          <Field label="Grade / Class">
+          <Field label="Grade">
             <SelectField
               value={form.grade_id}
-              onChange={(value) => setForm({ ...form, grade_id: value })}
+              onChange={(value) => {
+                setForm({ ...form, grade_id: value });
+                setEnrol({});
+              }}
               placeholder="Select grade"
               allowEmpty
               emptyLabel="Not assigned"
@@ -449,6 +546,61 @@ function StudentsPage() {
             />
           </Field>
         </FieldGrid>
+
+        <div className="mt-2 space-y-3 rounded-lg border border-border p-4">
+          <div>
+            <p className="text-sm font-medium">Subjects & teachers</p>
+            <p className="text-xs text-muted-foreground">
+              Pick the subjects taught in this grade, then choose the assigned teacher.
+            </p>
+          </div>
+          {!form.grade_id ? (
+            <p className="text-sm text-muted-foreground">Select a grade first.</p>
+          ) : gradeSubjects.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No subjects are taught in this grade yet.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {gradeSubjects.map((subject) => {
+                const checked = subject.id in enrol;
+                const options = teachersFor(subject.id);
+                return (
+                  <div key={subject.id} className="flex flex-wrap items-center gap-3">
+                    <label className="flex min-w-40 items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={(next) =>
+                          setEnrol((current) => {
+                            const copy = { ...current };
+                            if (next) copy[subject.id] = options[0]?.value ?? "";
+                            else delete copy[subject.id];
+                            return copy;
+                          })
+                        }
+                      />
+                      {subject.name}
+                    </label>
+                    {checked && (
+                      <div className="w-56">
+                        <SelectField
+                          value={enrol[subject.id] ?? ""}
+                          onChange={(value) =>
+                            setEnrol((current) => ({ ...current, [subject.id]: value }))
+                          }
+                          placeholder={options.length ? "Select teacher" : "No teacher assigned"}
+                          allowEmpty
+                          emptyLabel="Unassigned"
+                          options={options}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </FormDialog>
     </>
   );

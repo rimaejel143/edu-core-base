@@ -853,7 +853,6 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          level: string | null
           name: string
           status: Database["public"]["Enums"]["record_status"]
           updated_at: string
@@ -864,7 +863,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          level?: string | null
           name: string
           status?: Database["public"]["Enums"]["record_status"]
           updated_at?: string
@@ -875,7 +873,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          level?: string | null
           name?: string
           status?: Database["public"]["Enums"]["record_status"]
           updated_at?: string
@@ -894,7 +891,7 @@ export type Database = {
         Row: {
           center_id: string
           created_at: string
-          grade_id: string | null
+          grade_id: string
           id: string
           subject_id: string
           teacher_id: string
@@ -903,7 +900,7 @@ export type Database = {
         Insert: {
           center_id: string
           created_at?: string
-          grade_id?: string | null
+          grade_id: string
           id?: string
           subject_id: string
           teacher_id: string
@@ -912,7 +909,7 @@ export type Database = {
         Update: {
           center_id?: string
           created_at?: string
-          grade_id?: string | null
+          grade_id?: string
           id?: string
           subject_id?: string
           teacher_id?: string
@@ -1037,7 +1034,65 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      teacher_assignments: {
+        Row: {
+          center_id: string | null
+          created_at: string | null
+          grade_id: string | null
+          id: string | null
+          subject_id: string | null
+          teacher_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          center_id?: string | null
+          created_at?: string | null
+          grade_id?: string | null
+          id?: string | null
+          subject_id?: string | null
+          teacher_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          center_id?: string | null
+          created_at?: string | null
+          grade_id?: string | null
+          id?: string | null
+          subject_id?: string | null
+          teacher_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_subjects_center_id_fkey"
+            columns: ["center_id"]
+            isOneToOne: false
+            referencedRelation: "centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teacher_subjects_grade_id_fkey"
+            columns: ["grade_id"]
+            isOneToOne: false
+            referencedRelation: "grades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teacher_subjects_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teacher_subjects_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       can_access_center: { Args: { _center_id: string }; Returns: boolean }

@@ -2,15 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { ArrowLeft, BookOpen, CalendarCheck, LineChart, Users } from "lucide-react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { EmptyState, PageHeader, StatCard } from "@/components/common/DataDisplay";
 import { Badge } from "@/components/ui/badge";
@@ -42,18 +34,18 @@ import {
 } from "@/lib/api";
 import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/centers/$centerId/classes/$gradeId")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/grades/$gradeId")({
   head: () => ({
     meta: [
-      { title: "Class overview — Center Management System" },
+      { title: "Grade overview — Center Management System" },
       {
         name: "description",
-        content: "Class roster, subjects, teachers, attendance and grade analytics.",
+        content: "Grade roster, subjects, teachers, attendance and grade analytics.",
       },
-      { property: "og:title", content: "Class overview — Center Management System" },
+      { property: "og:title", content: "Grade overview — Center Management System" },
       {
         property: "og:description",
-        content: "Class roster, subjects, teachers, attendance and grade analytics.",
+        content: "Grade roster, subjects, teachers, attendance and grade analytics.",
       },
     ],
   }),
@@ -61,7 +53,7 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/classes/
 });
 
 function ClassDetailPage() {
-  const { gradeId } = useParams({ from: "/_authenticated/centers/$centerId/classes/$gradeId" });
+  const { gradeId } = useParams({ from: "/_authenticated/centers/$centerId/grades/$gradeId" });
   const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const grades = useQuery(gradesQuery(scopeId));
@@ -90,19 +82,22 @@ function ClassDetailPage() {
     const enrolled = (studentSubjects.data ?? [])
       .filter((row) => row.grade_id === gradeId)
       .map((row) => row.subject_id);
-    const ids = Array.from(new Set([...linked, ...enrolled]));
+    const taught = (teacherSubjects.data ?? [])
+      .filter((row) => row.grade_id === gradeId)
+      .map((row) => row.subject_id);
+    const ids = Array.from(new Set([...linked, ...enrolled, ...taught]));
     return (subjects.data ?? []).filter((subject) => ids.includes(subject.id));
-  }, [subjectGrades.data, studentSubjects.data, subjects.data, gradeId]);
+  }, [subjectGrades.data, studentSubjects.data, teacherSubjects.data, subjects.data, gradeId]);
 
+  // Teachers of this grade come strictly from teaching assignments (teacher + grade + subject).
   const classTeachers = useMemo(() => {
-    const subjectIds = classSubjects.map((subject) => subject.id);
     const ids = new Set(
       (teacherSubjects.data ?? [])
-        .filter((row) => row.grade_id === gradeId || subjectIds.includes(row.subject_id))
+        .filter((row) => row.grade_id === gradeId)
         .map((row) => row.teacher_id),
     );
     return (teachers.data ?? []).filter((teacher) => ids.has(teacher.id));
-  }, [teacherSubjects.data, teachers.data, classSubjects, gradeId]);
+  }, [teacherSubjects.data, teachers.data, gradeId]);
 
   const classAssessments = useMemo(
     () =>
@@ -121,15 +116,14 @@ function ClassDetailPage() {
     () =>
       classSubjects.map((subject) => ({
         subject: subject.name,
-        average:
-          averageScore(classAssessments.filter((row) => row.subject_id === subject.id)) ?? 0,
+        average: averageScore(classAssessments.filter((row) => row.subject_id === subject.id)) ?? 0,
       })),
     [classSubjects, classAssessments],
   );
 
   if (grades.isLoading) return <Skeleton className="h-64 w-full" />;
   if (!grade) {
-    return <EmptyState title="Class not found" description="This class no longer exists." />;
+    return <EmptyState title="Grade not found" description="This grade no longer exists." />;
   }
 
   const centerName = centers.data?.find((c) => c.id === grade.center_id)?.name ?? "—";
@@ -139,7 +133,7 @@ function ClassDetailPage() {
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
         <Link to="/centers/$centerId/subjects" params={{ centerId }}>
-          <ArrowLeft className="size-4" /> Back to subjects & classes
+          <ArrowLeft className="size-4" /> Back to subjects & grades
         </Link>
       </Button>
 
@@ -209,8 +203,7 @@ function ClassDetailPage() {
                     <div key={status} className="flex items-center justify-between py-3">
                       <span className="text-sm capitalize text-muted-foreground">{status}</span>
                       <span className="text-sm font-medium">
-                        {count} ·{" "}
-                        {Math.round((count / classAttendance.length) * 1000) / 10}%
+                        {count} · {Math.round((count / classAttendance.length) * 1000) / 10}%
                       </span>
                     </div>
                   );

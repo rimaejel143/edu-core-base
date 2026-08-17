@@ -24,7 +24,6 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   centersQuery,
   formatDate,
-
   profilesQuery,
   studentsQuery,
   subjectsQuery,
@@ -169,7 +168,11 @@ function CentersPage() {
       status: form.status,
     };
     const ok = editing
-      ? await crud.update(editing.id, { ...payload, center_id: editing.id }, `Center ${payload.name} updated`)
+      ? await crud.update(
+          editing.id,
+          { ...payload, center_id: editing.id },
+          `Center ${payload.name} updated`,
+        )
       : await crud.create(payload, `Center ${payload.name} created`);
     if (ok) setOpen(false);
   };
@@ -479,4 +482,3 @@ function CentersPage() {
     </>
   );
 }
-

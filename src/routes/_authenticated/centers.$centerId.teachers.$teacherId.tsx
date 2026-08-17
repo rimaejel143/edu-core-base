@@ -52,12 +52,14 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/teachers
       { title: "Teacher profile — Center Management System" },
       {
         name: "description",
-        content: "Teacher profile with assigned students, subjects, classes and performance analytics.",
+        content:
+          "Teacher profile with assigned students, subjects, grades and performance analytics.",
       },
       { property: "og:title", content: "Teacher profile — Center Management System" },
       {
         property: "og:description",
-        content: "Teacher profile with assigned students, subjects, classes and performance analytics.",
+        content:
+          "Teacher profile with assigned students, subjects, grades and performance analytics.",
       },
     ],
   }),
@@ -74,7 +76,9 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 }
 
 function TeacherDetailPage() {
-  const { teacherId } = useParams({ from: "/_authenticated/centers/$centerId/teachers/$teacherId" });
+  const { teacherId } = useParams({
+    from: "/_authenticated/centers/$centerId/teachers/$teacherId",
+  });
   const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const teachers = useQuery(teachersQuery(scopeId));
@@ -94,12 +98,16 @@ function TeacherDetailPage() {
     [teacherSubjects.data, teacherId],
   );
 
+  // A student counts for this teacher when the enrolment matches one of the
+  // teacher's grade + subject assignments (or names the teacher explicitly).
   const enrolments = useMemo(
     () =>
       (studentSubjects.data ?? []).filter(
         (row) =>
           row.teacher_id === teacherId ||
-          links.some((link) => link.subject_id === row.subject_id),
+          links.some(
+            (link) => link.subject_id === row.subject_id && link.grade_id === row.grade_id,
+          ),
       ),
     [studentSubjects.data, links, teacherId],
   );
@@ -123,20 +131,18 @@ function TeacherDetailPage() {
     () =>
       Array.from(
         new Set(
-          [
-            ...links.map((row) => row.grade_id),
-            ...myStudents.map((student) => student.grade_id),
-          ].filter((value): value is string => Boolean(value)),
+          links.map((row) => row.grade_id).filter((value): value is string => Boolean(value)),
         ),
       ),
-    [links, myStudents],
+    [links],
   );
 
   const myAssessments = useMemo(
     () =>
       (assessments.data ?? []).filter(
         (row) =>
-          (row.student_id !== null && studentIds.includes(row.student_id)) &&
+          row.student_id !== null &&
+          studentIds.includes(row.student_id) &&
           (row.subject_id === null || subjectIds.includes(row.subject_id)),
       ),
     [assessments.data, studentIds, subjectIds],
@@ -145,7 +151,9 @@ function TeacherDetailPage() {
   const myAttendance = useMemo(
     () =>
       (attendance.data ?? []).filter(
-        (row) => studentIds.includes(row.student_id) && (row.subject_id === null || subjectIds.includes(row.subject_id)),
+        (row) =>
+          studentIds.includes(row.student_id) &&
+          (row.subject_id === null || subjectIds.includes(row.subject_id)),
       ),
     [attendance.data, studentIds, subjectIds],
   );
@@ -209,7 +217,7 @@ function TeacherDetailPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Students" value={myStudents.length} icon={Users} />
         <StatCard label="Subjects" value={subjectIds.length} icon={BookOpen} />
-        <StatCard label="Classes" value={classIds.length} icon={GraduationCap} />
+        <StatCard label="Grades" value={classIds.length} icon={GraduationCap} />
         <StatCard
           label="Average student score"
           value={average ?? "—"}
@@ -221,7 +229,11 @@ function TeacherDetailPage() {
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         <StatCard label="New students (7 days)" value={countSince(enrolments, 7)} icon={Users} />
         <StatCard label="New students (30 days)" value={countSince(enrolments, 30)} icon={Users} />
-        <StatCard label="New students (365 days)" value={countSince(enrolments, 365)} icon={Users} />
+        <StatCard
+          label="New students (365 days)"
+          value={countSince(enrolments, 365)}
+          icon={Users}
+        />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -301,7 +313,7 @@ function TeacherDetailPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Student</TableHead>
-                      <TableHead className="hidden sm:table-cell">Class</TableHead>
+                      <TableHead className="hidden sm:table-cell">Grade</TableHead>
                       <TableHead className="text-right">Average</TableHead>
                     </TableRow>
                   </TableHeader>
