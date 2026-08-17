@@ -90,19 +90,23 @@ function ClassDetailPage() {
     const enrolled = (studentSubjects.data ?? [])
       .filter((row) => row.grade_id === gradeId)
       .map((row) => row.subject_id);
-    const ids = Array.from(new Set([...linked, ...enrolled]));
+    const taught = (teacherSubjects.data ?? [])
+      .filter((row) => row.grade_id === gradeId)
+      .map((row) => row.subject_id);
+    const ids = Array.from(new Set([...linked, ...enrolled, ...taught]));
     return (subjects.data ?? []).filter((subject) => ids.includes(subject.id));
-  }, [subjectGrades.data, studentSubjects.data, subjects.data, gradeId]);
+  }, [subjectGrades.data, studentSubjects.data, teacherSubjects.data, subjects.data, gradeId]);
 
+  // Teachers of this grade come strictly from teaching assignments (teacher + grade + subject).
   const classTeachers = useMemo(() => {
-    const subjectIds = classSubjects.map((subject) => subject.id);
     const ids = new Set(
       (teacherSubjects.data ?? [])
-        .filter((row) => row.grade_id === gradeId || subjectIds.includes(row.subject_id))
+        .filter((row) => row.grade_id === gradeId)
         .map((row) => row.teacher_id),
     );
     return (teachers.data ?? []).filter((teacher) => ids.has(teacher.id));
-  }, [teacherSubjects.data, teachers.data, classSubjects, gradeId]);
+  }, [teacherSubjects.data, teachers.data, gradeId]);
+
 
   const classAssessments = useMemo(
     () =>
