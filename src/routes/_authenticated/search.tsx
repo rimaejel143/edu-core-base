@@ -29,12 +29,12 @@ export const Route = createFileRoute("/_authenticated/search")({
       { title: "Search — Center Management System" },
       {
         name: "description",
-        content: "Search centers, students, teachers, classes and subjects across the platform.",
+        content: "Search centers, students, teachers, grades and subjects across the platform.",
       },
       { property: "og:title", content: "Search — Center Management System" },
       {
         property: "og:description",
-        content: "Search centers, students, teachers, classes and subjects across the platform.",
+        content: "Search centers, students, teachers, grades and subjects across the platform.",
       },
     ],
   }),
@@ -201,7 +201,7 @@ export function SearchScreen({ q }: { q: string }) {
         description={
           isSuperAdmin
             ? "Search every center, student, teacher, class and subject on the platform."
-            : "Search students, teachers, classes and subjects inside your center."
+            : "Search students, teachers, grades and subjects inside your center."
         }
       />
 

@@ -52,12 +52,12 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/teachers
       { title: "Teacher profile — Center Management System" },
       {
         name: "description",
-        content: "Teacher profile with assigned students, subjects, classes and performance analytics.",
+        content: "Teacher profile with assigned students, subjects, grades and performance analytics.",
       },
       { property: "og:title", content: "Teacher profile — Center Management System" },
       {
         property: "og:description",
-        content: "Teacher profile with assigned students, subjects, classes and performance analytics.",
+        content: "Teacher profile with assigned students, subjects, grades and performance analytics.",
       },
     ],
   }),
