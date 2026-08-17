@@ -33,7 +33,7 @@ import { useCrud } from "@/lib/crud";
 import type { Grade, RecordStatus, Subject } from "@/lib/types";
 import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/centers/$centerId/subjects")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/subjects/")({
   head: () => ({
     meta: [
       { title: "Subjects & Grades — Center Management System" },

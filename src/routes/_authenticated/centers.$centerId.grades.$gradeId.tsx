@@ -42,18 +42,18 @@ import {
 } from "@/lib/api";
 import { useScopeId, useWorkspaceCenterId } from "@/hooks/useCenterScope";
 
-export const Route = createFileRoute("/_authenticated/centers/$centerId/classes/$gradeId")({
+export const Route = createFileRoute("/_authenticated/centers/$centerId/grades/$gradeId")({
   head: () => ({
     meta: [
-      { title: "Class overview — Center Management System" },
+      { title: "Grade overview — Center Management System" },
       {
         name: "description",
-        content: "Class roster, subjects, teachers, attendance and grade analytics.",
+        content: "Grade roster, subjects, teachers, attendance and grade analytics.",
       },
-      { property: "og:title", content: "Class overview — Center Management System" },
+      { property: "og:title", content: "Grade overview — Center Management System" },
       {
         property: "og:description",
-        content: "Class roster, subjects, teachers, attendance and grade analytics.",
+        content: "Grade roster, subjects, teachers, attendance and grade analytics.",
       },
     ],
   }),
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/classes/
 });
 
 function ClassDetailPage() {
-  const { gradeId } = useParams({ from: "/_authenticated/centers/$centerId/classes/$gradeId" });
+  const { gradeId } = useParams({ from: "/_authenticated/centers/$centerId/grades/$gradeId" });
   const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const grades = useQuery(gradesQuery(scopeId));
@@ -129,7 +129,7 @@ function ClassDetailPage() {
 
   if (grades.isLoading) return <Skeleton className="h-64 w-full" />;
   if (!grade) {
-    return <EmptyState title="Class not found" description="This class no longer exists." />;
+    return <EmptyState title="Grade not found" description="This grade no longer exists." />;
   }
 
   const centerName = centers.data?.find((c) => c.id === grade.center_id)?.name ?? "—";
@@ -139,7 +139,7 @@ function ClassDetailPage() {
     <>
       <Button asChild variant="ghost" size="sm" className="mb-3 -ml-2">
         <Link to="/centers/$centerId/subjects" params={{ centerId }}>
-          <ArrowLeft className="size-4" /> Back to subjects & classes
+          <ArrowLeft className="size-4" /> Back to subjects & grades
         </Link>
       </Button>
 

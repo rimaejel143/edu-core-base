@@ -22,10 +22,10 @@ import { Route as AuthenticatedCentersCenterIdIndexRouteImport } from './routes/
 import { Route as AuthenticatedCentersCenterIdProgressRouteImport } from './routes/_authenticated/centers.$centerId.progress'
 import { Route as AuthenticatedCentersCenterIdReportsRouteImport } from './routes/_authenticated/centers.$centerId.reports'
 import { Route as AuthenticatedCentersCenterIdSearchRouteImport } from './routes/_authenticated/centers.$centerId.search'
-import { Route as AuthenticatedCentersCenterIdSubjectsRouteImport } from './routes/_authenticated/centers.$centerId.subjects'
-import { Route as AuthenticatedCentersCenterIdClassesGradeIdRouteImport } from './routes/_authenticated/centers.$centerId.classes.$gradeId'
+import { Route as AuthenticatedCentersCenterIdGradesGradeIdRouteImport } from './routes/_authenticated/centers.$centerId.grades.$gradeId'
 import { Route as AuthenticatedCentersCenterIdStudentsIndexRouteImport } from './routes/_authenticated/centers.$centerId.students.index'
 import { Route as AuthenticatedCentersCenterIdStudentsStudentIdRouteImport } from './routes/_authenticated/centers.$centerId.students.$studentId'
+import { Route as AuthenticatedCentersCenterIdSubjectsIndexRouteImport } from './routes/_authenticated/centers.$centerId.subjects.index'
 import { Route as AuthenticatedCentersCenterIdTeachersIndexRouteImport } from './routes/_authenticated/centers.$centerId.teachers.index'
 import { Route as AuthenticatedCentersCenterIdTeachersTeacherIdRouteImport } from './routes/_authenticated/centers.$centerId.teachers.$teacherId'
 
@@ -99,16 +99,10 @@ const AuthenticatedCentersCenterIdSearchRoute =
     path: '/search',
     getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
-const AuthenticatedCentersCenterIdSubjectsRoute =
-  AuthenticatedCentersCenterIdSubjectsRouteImport.update({
-    id: '/subjects',
-    path: '/subjects',
-    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
-  } as any)
-const AuthenticatedCentersCenterIdClassesGradeIdRoute =
-  AuthenticatedCentersCenterIdClassesGradeIdRouteImport.update({
-    id: '/classes/$gradeId',
-    path: '/classes/$gradeId',
+const AuthenticatedCentersCenterIdGradesGradeIdRoute =
+  AuthenticatedCentersCenterIdGradesGradeIdRouteImport.update({
+    id: '/grades/$gradeId',
+    path: '/grades/$gradeId',
     getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
 const AuthenticatedCentersCenterIdStudentsIndexRoute =
@@ -121,6 +115,12 @@ const AuthenticatedCentersCenterIdStudentsStudentIdRoute =
   AuthenticatedCentersCenterIdStudentsStudentIdRouteImport.update({
     id: '/students/$studentId',
     path: '/students/$studentId',
+    getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
+  } as any)
+const AuthenticatedCentersCenterIdSubjectsIndexRoute =
+  AuthenticatedCentersCenterIdSubjectsIndexRouteImport.update({
+    id: '/subjects/',
+    path: '/subjects/',
     getParentRoute: () => AuthenticatedCentersCenterIdRouteRoute,
   } as any)
 const AuthenticatedCentersCenterIdTeachersIndexRoute =
@@ -148,12 +148,12 @@ export interface FileRoutesByFullPath {
   '/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
   '/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
   '/centers/$centerId/search': typeof AuthenticatedCentersCenterIdSearchRoute
-  '/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
   '/centers/$centerId/': typeof AuthenticatedCentersCenterIdIndexRoute
-  '/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
+  '/centers/$centerId/grades/$gradeId': typeof AuthenticatedCentersCenterIdGradesGradeIdRoute
   '/centers/$centerId/students/$studentId': typeof AuthenticatedCentersCenterIdStudentsStudentIdRoute
   '/centers/$centerId/teachers/$teacherId': typeof AuthenticatedCentersCenterIdTeachersTeacherIdRoute
   '/centers/$centerId/students/': typeof AuthenticatedCentersCenterIdStudentsIndexRoute
+  '/centers/$centerId/subjects/': typeof AuthenticatedCentersCenterIdSubjectsIndexRoute
   '/centers/$centerId/teachers/': typeof AuthenticatedCentersCenterIdTeachersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -167,12 +167,12 @@ export interface FileRoutesByTo {
   '/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
   '/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
   '/centers/$centerId/search': typeof AuthenticatedCentersCenterIdSearchRoute
-  '/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
   '/centers/$centerId': typeof AuthenticatedCentersCenterIdIndexRoute
-  '/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
+  '/centers/$centerId/grades/$gradeId': typeof AuthenticatedCentersCenterIdGradesGradeIdRoute
   '/centers/$centerId/students/$studentId': typeof AuthenticatedCentersCenterIdStudentsStudentIdRoute
   '/centers/$centerId/teachers/$teacherId': typeof AuthenticatedCentersCenterIdTeachersTeacherIdRoute
   '/centers/$centerId/students': typeof AuthenticatedCentersCenterIdStudentsIndexRoute
+  '/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsIndexRoute
   '/centers/$centerId/teachers': typeof AuthenticatedCentersCenterIdTeachersIndexRoute
 }
 export interface FileRoutesById {
@@ -189,12 +189,12 @@ export interface FileRoutesById {
   '/_authenticated/centers/$centerId/progress': typeof AuthenticatedCentersCenterIdProgressRoute
   '/_authenticated/centers/$centerId/reports': typeof AuthenticatedCentersCenterIdReportsRoute
   '/_authenticated/centers/$centerId/search': typeof AuthenticatedCentersCenterIdSearchRoute
-  '/_authenticated/centers/$centerId/subjects': typeof AuthenticatedCentersCenterIdSubjectsRoute
   '/_authenticated/centers/$centerId/': typeof AuthenticatedCentersCenterIdIndexRoute
-  '/_authenticated/centers/$centerId/classes/$gradeId': typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
+  '/_authenticated/centers/$centerId/grades/$gradeId': typeof AuthenticatedCentersCenterIdGradesGradeIdRoute
   '/_authenticated/centers/$centerId/students/$studentId': typeof AuthenticatedCentersCenterIdStudentsStudentIdRoute
   '/_authenticated/centers/$centerId/teachers/$teacherId': typeof AuthenticatedCentersCenterIdTeachersTeacherIdRoute
   '/_authenticated/centers/$centerId/students/': typeof AuthenticatedCentersCenterIdStudentsIndexRoute
+  '/_authenticated/centers/$centerId/subjects/': typeof AuthenticatedCentersCenterIdSubjectsIndexRoute
   '/_authenticated/centers/$centerId/teachers/': typeof AuthenticatedCentersCenterIdTeachersIndexRoute
 }
 export interface FileRouteTypes {
@@ -211,12 +211,12 @@ export interface FileRouteTypes {
     | '/centers/$centerId/progress'
     | '/centers/$centerId/reports'
     | '/centers/$centerId/search'
-    | '/centers/$centerId/subjects'
     | '/centers/$centerId/'
-    | '/centers/$centerId/classes/$gradeId'
+    | '/centers/$centerId/grades/$gradeId'
     | '/centers/$centerId/students/$studentId'
     | '/centers/$centerId/teachers/$teacherId'
     | '/centers/$centerId/students/'
+    | '/centers/$centerId/subjects/'
     | '/centers/$centerId/teachers/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -230,12 +230,12 @@ export interface FileRouteTypes {
     | '/centers/$centerId/progress'
     | '/centers/$centerId/reports'
     | '/centers/$centerId/search'
-    | '/centers/$centerId/subjects'
     | '/centers/$centerId'
-    | '/centers/$centerId/classes/$gradeId'
+    | '/centers/$centerId/grades/$gradeId'
     | '/centers/$centerId/students/$studentId'
     | '/centers/$centerId/teachers/$teacherId'
     | '/centers/$centerId/students'
+    | '/centers/$centerId/subjects'
     | '/centers/$centerId/teachers'
   id:
     | '__root__'
@@ -251,12 +251,12 @@ export interface FileRouteTypes {
     | '/_authenticated/centers/$centerId/progress'
     | '/_authenticated/centers/$centerId/reports'
     | '/_authenticated/centers/$centerId/search'
-    | '/_authenticated/centers/$centerId/subjects'
     | '/_authenticated/centers/$centerId/'
-    | '/_authenticated/centers/$centerId/classes/$gradeId'
+    | '/_authenticated/centers/$centerId/grades/$gradeId'
     | '/_authenticated/centers/$centerId/students/$studentId'
     | '/_authenticated/centers/$centerId/teachers/$teacherId'
     | '/_authenticated/centers/$centerId/students/'
+    | '/_authenticated/centers/$centerId/subjects/'
     | '/_authenticated/centers/$centerId/teachers/'
   fileRoutesById: FileRoutesById
 }
@@ -360,18 +360,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCentersCenterIdSearchRouteImport
       parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
-    '/_authenticated/centers/$centerId/subjects': {
-      id: '/_authenticated/centers/$centerId/subjects'
-      path: '/subjects'
-      fullPath: '/centers/$centerId/subjects'
-      preLoaderRoute: typeof AuthenticatedCentersCenterIdSubjectsRouteImport
-      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
-    }
-    '/_authenticated/centers/$centerId/classes/$gradeId': {
-      id: '/_authenticated/centers/$centerId/classes/$gradeId'
-      path: '/classes/$gradeId'
-      fullPath: '/centers/$centerId/classes/$gradeId'
-      preLoaderRoute: typeof AuthenticatedCentersCenterIdClassesGradeIdRouteImport
+    '/_authenticated/centers/$centerId/grades/$gradeId': {
+      id: '/_authenticated/centers/$centerId/grades/$gradeId'
+      path: '/grades/$gradeId'
+      fullPath: '/centers/$centerId/grades/$gradeId'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdGradesGradeIdRouteImport
       parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
     '/_authenticated/centers/$centerId/students/': {
@@ -386,6 +379,13 @@ declare module '@tanstack/react-router' {
       path: '/students/$studentId'
       fullPath: '/centers/$centerId/students/$studentId'
       preLoaderRoute: typeof AuthenticatedCentersCenterIdStudentsStudentIdRouteImport
+      parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
+    }
+    '/_authenticated/centers/$centerId/subjects/': {
+      id: '/_authenticated/centers/$centerId/subjects/'
+      path: '/subjects'
+      fullPath: '/centers/$centerId/subjects/'
+      preLoaderRoute: typeof AuthenticatedCentersCenterIdSubjectsIndexRouteImport
       parentRoute: typeof AuthenticatedCentersCenterIdRouteRoute
     }
     '/_authenticated/centers/$centerId/teachers/': {
@@ -409,12 +409,12 @@ interface AuthenticatedCentersCenterIdRouteRouteChildren {
   AuthenticatedCentersCenterIdProgressRoute: typeof AuthenticatedCentersCenterIdProgressRoute
   AuthenticatedCentersCenterIdReportsRoute: typeof AuthenticatedCentersCenterIdReportsRoute
   AuthenticatedCentersCenterIdSearchRoute: typeof AuthenticatedCentersCenterIdSearchRoute
-  AuthenticatedCentersCenterIdSubjectsRoute: typeof AuthenticatedCentersCenterIdSubjectsRoute
   AuthenticatedCentersCenterIdIndexRoute: typeof AuthenticatedCentersCenterIdIndexRoute
-  AuthenticatedCentersCenterIdClassesGradeIdRoute: typeof AuthenticatedCentersCenterIdClassesGradeIdRoute
+  AuthenticatedCentersCenterIdGradesGradeIdRoute: typeof AuthenticatedCentersCenterIdGradesGradeIdRoute
   AuthenticatedCentersCenterIdStudentsStudentIdRoute: typeof AuthenticatedCentersCenterIdStudentsStudentIdRoute
   AuthenticatedCentersCenterIdTeachersTeacherIdRoute: typeof AuthenticatedCentersCenterIdTeachersTeacherIdRoute
   AuthenticatedCentersCenterIdStudentsIndexRoute: typeof AuthenticatedCentersCenterIdStudentsIndexRoute
+  AuthenticatedCentersCenterIdSubjectsIndexRoute: typeof AuthenticatedCentersCenterIdSubjectsIndexRoute
   AuthenticatedCentersCenterIdTeachersIndexRoute: typeof AuthenticatedCentersCenterIdTeachersIndexRoute
 }
 
@@ -426,18 +426,18 @@ const AuthenticatedCentersCenterIdRouteRouteChildren: AuthenticatedCentersCenter
       AuthenticatedCentersCenterIdReportsRoute,
     AuthenticatedCentersCenterIdSearchRoute:
       AuthenticatedCentersCenterIdSearchRoute,
-    AuthenticatedCentersCenterIdSubjectsRoute:
-      AuthenticatedCentersCenterIdSubjectsRoute,
     AuthenticatedCentersCenterIdIndexRoute:
       AuthenticatedCentersCenterIdIndexRoute,
-    AuthenticatedCentersCenterIdClassesGradeIdRoute:
-      AuthenticatedCentersCenterIdClassesGradeIdRoute,
+    AuthenticatedCentersCenterIdGradesGradeIdRoute:
+      AuthenticatedCentersCenterIdGradesGradeIdRoute,
     AuthenticatedCentersCenterIdStudentsStudentIdRoute:
       AuthenticatedCentersCenterIdStudentsStudentIdRoute,
     AuthenticatedCentersCenterIdTeachersTeacherIdRoute:
       AuthenticatedCentersCenterIdTeachersTeacherIdRoute,
     AuthenticatedCentersCenterIdStudentsIndexRoute:
       AuthenticatedCentersCenterIdStudentsIndexRoute,
+    AuthenticatedCentersCenterIdSubjectsIndexRoute:
+      AuthenticatedCentersCenterIdSubjectsIndexRoute,
     AuthenticatedCentersCenterIdTeachersIndexRoute:
       AuthenticatedCentersCenterIdTeachersIndexRoute,
   }
