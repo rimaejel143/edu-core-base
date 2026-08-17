@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { BookOpen, Eye, Pencil, Plus, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { EmptyState, PageHeader } from "@/components/common/DataDisplay";
 import {
@@ -28,12 +28,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import {
   centersQuery,
   formatDate,
   fullName,
   gradesQuery,
+  subjectGradesQuery,
   subjectsQuery,
   teacherSubjectsQuery,
   teachersQuery,
@@ -75,6 +75,7 @@ interface TeacherForm {
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
+const pairKey = (gradeId: string, subjectId: string) => `${gradeId}:${subjectId}`;
 
 function TeachersPage() {
   const centerId = useWorkspaceCenterId() ?? "";
@@ -83,9 +84,9 @@ function TeachersPage() {
   const centers = useQuery(centersQuery(scopeId));
   const subjects = useQuery(subjectsQuery(scopeId));
   const grades = useQuery(gradesQuery(scopeId));
+  const subjectGrades = useQuery(subjectGradesQuery(scopeId));
   const links = useQuery(teacherSubjectsQuery(scopeId));
   const crud = useCrud("teachers", "Teacher");
-  const linkCrud = useCrud("teacher_subjects", "Assignment");
 
   const defaultCenter = centerId;
   const [open, setOpen] = useState(false);
@@ -100,24 +101,41 @@ function TeachersPage() {
     center_id: "",
     status: "active",
   });
-
-  const [assignFor, setAssignFor] = useState<Teacher | null>(null);
-  const [assignSubjects, setAssignSubjects] = useState<string[]>([]);
-  const [assignGrade, setAssignGrade] = useState("");
+  // Assignments are teacher + grade + subject triples, edited inline with the teacher.
+  const [pairs, setPairs] = useState<string[]>([]);
 
   const centerName = (id: string) =>
     centers.data?.find((center) => center.id === id)?.name ?? "—";
 
-  const subjectsFor = (teacherId: string) =>
-    (links.data ?? [])
-      .filter((link) => link.teacher_id === teacherId)
-      .map(
-        (link) => subjects.data?.find((subject) => subject.id === link.subject_id)?.name ?? "",
-      )
+  const formCenter = form.center_id || defaultCenter;
+
+  const formGrades = useMemo(
+    () => (grades.data ?? []).filter((grade) => grade.center_id === formCenter),
+    [grades.data, formCenter],
+  );
+
+  const subjectsForGrade = (gradeId: string) => {
+    const linked = (subjectGrades.data ?? [])
+      .filter((row) => row.grade_id === gradeId)
+      .map((row) => row.subject_id);
+    const pool = (subjects.data ?? []).filter((subject) => subject.center_id === formCenter);
+    return linked.length > 0 ? pool.filter((subject) => linked.includes(subject.id)) : pool;
+  };
+
+  const summaryFor = (teacherId: string) => {
+    const rows = (links.data ?? []).filter((link) => link.teacher_id === teacherId);
+    return rows
+      .map((row) => {
+        const subject = subjects.data?.find((item) => item.id === row.subject_id)?.name;
+        const grade = grades.data?.find((item) => item.id === row.grade_id)?.name;
+        return subject ? (grade ? `${subject} (${grade})` : subject) : "";
+      })
       .filter(Boolean);
+  };
 
   const openCreate = () => {
     setEditing(null);
+    setPairs([]);
     setForm({
       first_name: "",
       last_name: "",
@@ -133,6 +151,11 @@ function TeachersPage() {
 
   const openEdit = (teacher: Teacher) => {
     setEditing(teacher);
+    setPairs(
+      (links.data ?? [])
+        .filter((link) => link.teacher_id === teacher.id && link.grade_id)
+        .map((link) => pairKey(link.grade_id as string, link.subject_id)),
+    );
     setForm({
       first_name: teacher.first_name,
       last_name: teacher.last_name,
@@ -146,6 +169,38 @@ function TeachersPage() {
     setOpen(true);
   };
 
+  const syncAssignments = async (teacherId: string, teacherCenter: string) => {
+    const current = (links.data ?? []).filter((link) => link.teacher_id === teacherId);
+    const keep = new Set(pairs);
+    const toRemove = current.filter(
+      (link) => !link.grade_id || !keep.has(pairKey(link.grade_id, link.subject_id)),
+    );
+    const existing = new Set(
+      current
+        .filter((link) => link.grade_id)
+        .map((link) => pairKey(link.grade_id as string, link.subject_id)),
+    );
+    const toAdd = pairs.filter((key) => !existing.has(key));
+
+    for (const link of toRemove) {
+      await supabase.from("teacher_subjects").delete().eq("id", link.id);
+    }
+    if (toAdd.length > 0) {
+      await supabase.from("teacher_subjects").insert(
+        toAdd.map((key) => {
+          const [gradeId, subjectId] = key.split(":");
+          return {
+            center_id: teacherCenter,
+            teacher_id: teacherId,
+            grade_id: gradeId,
+            subject_id: subjectId,
+          };
+        }),
+      );
+    }
+    await links.refetch();
+  };
+
   const submit = async () => {
     const payload = {
       first_name: form.first_name.trim(),
@@ -154,59 +209,33 @@ function TeachersPage() {
       phone: form.phone.trim() || null,
       specialization: form.specialization.trim() || null,
       hire_date: form.hire_date,
-      center_id: form.center_id,
+      center_id: formCenter,
       status: form.status,
     };
     const label = `${payload.first_name} ${payload.last_name}`.trim();
-    const ok = editing
-      ? await crud.update(editing.id, payload, `Teacher ${label} updated`)
-      : await crud.create(payload, `Teacher ${label} added`);
-    if (ok) setOpen(false);
-  };
 
-  const openAssign = (teacher: Teacher) => {
-    setAssignFor(teacher);
-    setAssignGrade("");
-    setAssignSubjects(
-      (links.data ?? [])
-        .filter((link) => link.teacher_id === teacher.id)
-        .map((link) => link.subject_id),
-    );
-  };
-
-  const saveAssignments = async () => {
-    if (!assignFor) return;
-    const current = (links.data ?? []).filter((link) => link.teacher_id === assignFor.id);
-    const toRemove = current.filter((link) => !assignSubjects.includes(link.subject_id));
-    const toAdd = assignSubjects.filter(
-      (subjectId) => !current.some((link) => link.subject_id === subjectId),
-    );
-
-    for (const link of toRemove) {
-      await supabase.from("teacher_subjects").delete().eq("id", link.id);
+    if (editing) {
+      const ok = await crud.update(editing.id, payload, `Teacher ${label} updated`);
+      if (!ok) return;
+      await syncAssignments(editing.id, formCenter);
+      setOpen(false);
+      return;
     }
-    if (toAdd.length > 0) {
-      await linkCrud.create(
-        {
-          center_id: assignFor.center_id,
-          teacher_id: assignFor.id,
-          subject_id: toAdd[0],
-          grade_id: assignGrade || null,
-        },
-        `${fullName(assignFor)} assigned to subjects`,
-      );
-      for (const subjectId of toAdd.slice(1)) {
-        await supabase.from("teacher_subjects").insert({
-          center_id: assignFor.center_id,
-          teacher_id: assignFor.id,
-          subject_id: subjectId,
-          grade_id: assignGrade || null,
-        });
-      }
-    }
-    setAssignFor(null);
-  };
 
+    const created = await crud.create(payload, `Teacher ${label} added`);
+    if (!created) return;
+    const { data: row } = await supabase
+      .from("teachers")
+      .select("id")
+      .eq("center_id", formCenter)
+      .eq("first_name", payload.first_name)
+      .eq("last_name", payload.last_name)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (row?.id && pairs.length > 0) await syncAssignments(row.id, formCenter);
+    setOpen(false);
+  };
 
   return (
     <>
@@ -243,7 +272,7 @@ function TeachersPage() {
                     <TableHead className="hidden md:table-cell">Specialization</TableHead>
                     <TableHead className="hidden lg:table-cell">Email</TableHead>
                     <TableHead className="hidden lg:table-cell">Center</TableHead>
-                    <TableHead className="hidden xl:table-cell">Subjects</TableHead>
+                    <TableHead className="hidden xl:table-cell">Assignments</TableHead>
                     <TableHead className="hidden lg:table-cell">Hired</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="w-12" />
@@ -271,7 +300,7 @@ function TeachersPage() {
                         {centerName(teacher.center_id)}
                       </TableCell>
                       <TableCell className="hidden xl:table-cell">
-                        {subjectsFor(teacher.id).join(", ") || "—"}
+                        {summaryFor(teacher.id).join(", ") || "—"}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {formatDate(teacher.hire_date)}
@@ -290,9 +319,6 @@ function TeachersPage() {
                           </ActionItem>
                           <ActionItem onSelect={() => openEdit(teacher)}>
                             <Pencil className="size-4" /> Edit
-                          </ActionItem>
-                          <ActionItem onSelect={() => openAssign(teacher)}>
-                            <BookOpen className="size-4" /> Assign subjects
                           </ActionItem>
                           <ConfirmDelete
                             title="Delete teacher?"
@@ -381,48 +407,51 @@ function TeachersPage() {
             />
           </Field>
         </FieldGrid>
-      </FormDialog>
 
-      <FormDialog
-        open={Boolean(assignFor)}
-        onOpenChange={(next) => !next && setAssignFor(null)}
-        title={assignFor ? `Assign subjects — ${fullName(assignFor)}` : "Assign subjects"}
-        description="Select every subject this teacher teaches."
-        pending={linkCrud.pending}
-        onSubmit={saveAssignments}
-      >
-        <Field label="Grade / Class (optional)">
-          <SelectField
-            value={assignGrade}
-            onChange={setAssignGrade}
-            placeholder="Any grade"
-            allowEmpty
-            emptyLabel="Any grade"
-            options={(grades.data ?? [])
-              .filter((grade) => !assignFor || grade.center_id === assignFor.center_id)
-              .map((grade) => ({ value: grade.id, label: grade.name }))}
-          />
-        </Field>
-        <div className="space-y-2">
-          {(subjects.data ?? [])
-            .filter((subject) => !assignFor || subject.center_id === assignFor.center_id)
-            .map((subject) => (
-              <label key={subject.id} className="flex items-center gap-2 text-sm">
-                <Checkbox
-                  checked={assignSubjects.includes(subject.id)}
-                  onCheckedChange={(checked) =>
-                    setAssignSubjects((current) =>
-                      checked
-                        ? [...current, subject.id]
-                        : current.filter((id) => id !== subject.id),
-                    )
-                  }
-                />
-                {subject.name}
-              </label>
-            ))}
-          {(subjects.data ?? []).length === 0 && (
-            <p className="text-sm text-muted-foreground">Create subjects first.</p>
+        <div className="mt-2 space-y-3 rounded-lg border border-border p-4">
+          <div>
+            <p className="text-sm font-medium">Assignments</p>
+            <p className="text-xs text-muted-foreground">
+              Pick the subjects this teacher teaches in each grade.
+            </p>
+          </div>
+          {formGrades.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Create grades first.</p>
+          ) : (
+            <div className="space-y-3">
+              {formGrades.map((grade) => {
+                const options = subjectsForGrade(grade.id);
+                return (
+                  <div key={grade.id}>
+                    <p className="mb-1.5 text-sm font-medium">{grade.name}</p>
+                    {options.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">No subjects for this grade.</p>
+                    ) : (
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {options.map((subject) => {
+                          const key = pairKey(grade.id, subject.id);
+                          return (
+                            <label key={key} className="flex items-center gap-2 text-sm">
+                              <Checkbox
+                                checked={pairs.includes(key)}
+                                onCheckedChange={(checked) =>
+                                  setPairs((current) =>
+                                    checked
+                                      ? [...current, key]
+                                      : current.filter((item) => item !== key),
+                                  )
+                                }
+                              />
+                              {subject.name}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </FormDialog>
