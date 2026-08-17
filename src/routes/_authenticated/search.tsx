@@ -166,29 +166,30 @@ export function SearchScreen({ q }: { q: string }) {
       if (matches(needle, [grade.name, grade.room, grade.description])) {
         out.push({
           id: grade.id,
-          kind: "Class",
+          kind: "Grade",
           name: grade.name,
           center: centerName(grade.center_id),
-          detail: grade.room ? `Room ${grade.room}` : "Class group",
-          to: "/centers/$centerId/classes/$gradeId",
+          detail: grade.room ? `Room ${grade.room}` : "Grade level",
+          to: "/centers/$centerId/grades/$gradeId",
           params: { centerId: grade.center_id, gradeId: grade.id },
         });
       }
     }
 
     for (const subject of subjects.data ?? []) {
-      if (matches(needle, [subject.name, subject.code, subject.level, subject.description])) {
+      if (matches(needle, [subject.name, subject.code, subject.description])) {
         out.push({
           id: subject.id,
           kind: "Subject",
           name: subject.name,
           center: centerName(subject.center_id),
-          detail: `${subject.code ?? "—"} · ${subject.level ?? "all levels"}`,
-          to: "/centers/$centerId/subjects",
-          params: { centerId: subject.center_id },
+          detail: subject.code ?? "—",
+          to: "/centers/$centerId/subjects/$subjectId",
+          params: { centerId: subject.center_id, subjectId: subject.id },
         });
       }
     }
+
 
     return out;
   }, [term, centers.data, profiles.data, students.data, teachers.data, grades.data, subjects.data]);
