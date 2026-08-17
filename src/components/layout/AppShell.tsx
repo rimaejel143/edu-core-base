@@ -23,7 +23,7 @@ import { centerQuery, initials } from "@/lib/api";
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile, user, isSuperAdmin, signOut } = useAuth();
   const workspaceCenterId = useWorkspaceCenterId();
-  const activeCenterId = workspaceCenterId ?? (isSuperAdmin ? null : profile?.center_id ?? null);
+  const activeCenterId = workspaceCenterId ?? (isSuperAdmin ? null : (profile?.center_id ?? null));
   const centerName = useQuery(centerQuery(activeCenterId)).data?.name ?? null;
   const navigate = useNavigate();
   const queryClient = useQueryClient();

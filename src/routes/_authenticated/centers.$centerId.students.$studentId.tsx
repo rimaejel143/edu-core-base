@@ -72,7 +72,9 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 }
 
 function StudentDetailPage() {
-  const { studentId } = useParams({ from: "/_authenticated/centers/$centerId/students/$studentId" });
+  const { studentId } = useParams({
+    from: "/_authenticated/centers/$centerId/students/$studentId",
+  });
   const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const student = useQuery(studentQuery(studentId));
@@ -131,9 +133,7 @@ function StudentDetailPage() {
   }
 
   if (!record) {
-    return (
-      <EmptyState title="Student not found" description="This student no longer exists." />
-    );
+    return <EmptyState title="Student not found" description="This student no longer exists." />;
   }
 
   const gradeName = grades.data?.find((grade) => grade.id === record.grade_id)?.name ?? "—";
@@ -150,9 +150,7 @@ function StudentDetailPage() {
       .map((row) => row.subject_id),
   ]);
   const gradeSubjectOptions = (subjects.data ?? [])
-    .filter(
-      (subject) => subject.center_id === record.center_id && gradeSubjectIds.has(subject.id),
-    )
+    .filter((subject) => subject.center_id === record.center_id && gradeSubjectIds.has(subject.id))
     .map((subject) => ({ value: subject.id, label: subject.name }));
   const teacherOptions = (assignments.data ?? [])
     .filter((row) => row.subject_id === subjectId && row.grade_id === record.grade_id)
@@ -383,7 +381,11 @@ function StudentDetailPage() {
                       title="Delete note?"
                       description={`"${note.title}" will be permanently removed.`}
                       onConfirm={() => {
-                        void noteCrud.remove(note.id, note.center_id, `Note "${note.title}" deleted`);
+                        void noteCrud.remove(
+                          note.id,
+                          note.center_id,
+                          `Note "${note.title}" deleted`,
+                        );
                       }}
                       trigger={
                         <Button variant="ghost" size="icon" className="size-8">
@@ -468,9 +470,7 @@ function StudentDetailPage() {
           <Field label="Title">
             <Input
               value={noteForm.title}
-              onChange={(event) =>
-                setNoteForm((prev) => ({ ...prev, title: event.target.value }))
-              }
+              onChange={(event) => setNoteForm((prev) => ({ ...prev, title: event.target.value }))}
             />
           </Field>
         </FieldGrid>
@@ -512,9 +512,7 @@ function StudentDetailPage() {
           <Input
             value={docForm.file_path}
             placeholder="Storage path or URL"
-            onChange={(event) =>
-              setDocForm((prev) => ({ ...prev, file_path: event.target.value }))
-            }
+            onChange={(event) => setDocForm((prev) => ({ ...prev, file_path: event.target.value }))}
           />
         </Field>
       </FormDialog>

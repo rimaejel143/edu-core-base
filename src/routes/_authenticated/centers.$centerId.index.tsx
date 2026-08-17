@@ -121,8 +121,7 @@ function CenterProfilePage() {
 
   const subjectPerformance = scoped.subjects.map((subject) => ({
     name: subject.name,
-    average:
-      averageScore(scoped.assessments.filter((row) => row.subject_id === subject.id)) ?? 0,
+    average: averageScore(scoped.assessments.filter((row) => row.subject_id === subject.id)) ?? 0,
   }));
 
   if (!centers.isLoading && !center) {
@@ -272,9 +271,7 @@ function CenterProfilePage() {
                             {formatDate(student.registration_date)}
                           </TableCell>
                           <TableCell>
-                            <Badge
-                              variant={student.status === "active" ? "default" : "secondary"}
-                            >
+                            <Badge variant={student.status === "active" ? "default" : "secondary"}>
                               {student.status}
                             </Badge>
                           </TableCell>

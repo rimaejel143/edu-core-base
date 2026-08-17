@@ -87,8 +87,7 @@ function SubjectsPage() {
   });
   const [linkedGrades, setLinkedGrades] = useState<string[]>([]);
 
-  const centerName = (id: string) =>
-    centers.data?.find((center) => center.id === id)?.name ?? "—";
+  const centerName = (id: string) => centers.data?.find((center) => center.id === id)?.name ?? "—";
 
   const gradesForSubject = (subjectId: string) =>
     (subjectGrades.data ?? [])
@@ -134,7 +133,7 @@ function SubjectsPage() {
     setSubjectForm({
       name: "",
       code: "",
-        description: "",
+      description: "",
       center_id: defaultCenter,
       status: "active",
     });
@@ -376,17 +375,13 @@ function SubjectsPage() {
             <Input
               type="number"
               value={gradeForm.level_order}
-              onChange={(event) =>
-                setGradeForm({ ...gradeForm, level_order: event.target.value })
-              }
+              onChange={(event) => setGradeForm({ ...gradeForm, level_order: event.target.value })}
             />
           </Field>
           <Field label="Status">
             <SelectField
               value={gradeForm.status}
-              onChange={(value) =>
-                setGradeForm({ ...gradeForm, status: value as RecordStatus })
-              }
+              onChange={(value) => setGradeForm({ ...gradeForm, status: value as RecordStatus })}
               options={STATUS_OPTIONS}
             />
           </Field>
@@ -444,9 +439,7 @@ function SubjectsPage() {
                     checked={linkedGrades.includes(grade.id)}
                     onCheckedChange={(checked) =>
                       setLinkedGrades((current) =>
-                        checked
-                          ? [...current, grade.id]
-                          : current.filter((id) => id !== grade.id),
+                        checked ? [...current, grade.id] : current.filter((id) => id !== grade.id),
                       )
                     }
                   />

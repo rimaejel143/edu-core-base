@@ -2,15 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { ArrowLeft, BookOpen, CalendarCheck, LineChart, Users } from "lucide-react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { EmptyState, PageHeader, StatCard } from "@/components/common/DataDisplay";
 import { Badge } from "@/components/ui/badge";
@@ -107,7 +99,6 @@ function ClassDetailPage() {
     return (teachers.data ?? []).filter((teacher) => ids.has(teacher.id));
   }, [teacherSubjects.data, teachers.data, gradeId]);
 
-
   const classAssessments = useMemo(
     () =>
       (assessments.data ?? []).filter(
@@ -125,8 +116,7 @@ function ClassDetailPage() {
     () =>
       classSubjects.map((subject) => ({
         subject: subject.name,
-        average:
-          averageScore(classAssessments.filter((row) => row.subject_id === subject.id)) ?? 0,
+        average: averageScore(classAssessments.filter((row) => row.subject_id === subject.id)) ?? 0,
       })),
     [classSubjects, classAssessments],
   );
@@ -213,8 +203,7 @@ function ClassDetailPage() {
                     <div key={status} className="flex items-center justify-between py-3">
                       <span className="text-sm capitalize text-muted-foreground">{status}</span>
                       <span className="text-sm font-medium">
-                        {count} ·{" "}
-                        {Math.round((count / classAttendance.length) * 1000) / 10}%
+                        {count} · {Math.round((count / classAttendance.length) * 1000) / 10}%
                       </span>
                     </div>
                   );

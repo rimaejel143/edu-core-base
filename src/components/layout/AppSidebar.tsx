@@ -80,7 +80,9 @@ export function AppSidebar() {
                 Center Manager
               </p>
               <p className="truncate text-xs text-sidebar-foreground/60">
-                {activeCenterId ? (center.data?.name ?? "Center workspace") : "Platform administration"}
+                {activeCenterId
+                  ? (center.data?.name ?? "Center workspace")
+                  : "Platform administration"}
               </p>
             </div>
           )}

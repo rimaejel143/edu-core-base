@@ -52,12 +52,14 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/teachers
       { title: "Teacher profile — Center Management System" },
       {
         name: "description",
-        content: "Teacher profile with assigned students, subjects, grades and performance analytics.",
+        content:
+          "Teacher profile with assigned students, subjects, grades and performance analytics.",
       },
       { property: "og:title", content: "Teacher profile — Center Management System" },
       {
         property: "og:description",
-        content: "Teacher profile with assigned students, subjects, grades and performance analytics.",
+        content:
+          "Teacher profile with assigned students, subjects, grades and performance analytics.",
       },
     ],
   }),
@@ -74,7 +76,9 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 }
 
 function TeacherDetailPage() {
-  const { teacherId } = useParams({ from: "/_authenticated/centers/$centerId/teachers/$teacherId" });
+  const { teacherId } = useParams({
+    from: "/_authenticated/centers/$centerId/teachers/$teacherId",
+  });
   const centerId = useWorkspaceCenterId() ?? "";
   const scopeId = useScopeId();
   const teachers = useQuery(teachersQuery(scopeId));
@@ -126,7 +130,9 @@ function TeacherDetailPage() {
   const classIds = useMemo(
     () =>
       Array.from(
-        new Set(links.map((row) => row.grade_id).filter((value): value is string => Boolean(value))),
+        new Set(
+          links.map((row) => row.grade_id).filter((value): value is string => Boolean(value)),
+        ),
       ),
     [links],
   );
@@ -135,7 +141,8 @@ function TeacherDetailPage() {
     () =>
       (assessments.data ?? []).filter(
         (row) =>
-          (row.student_id !== null && studentIds.includes(row.student_id)) &&
+          row.student_id !== null &&
+          studentIds.includes(row.student_id) &&
           (row.subject_id === null || subjectIds.includes(row.subject_id)),
       ),
     [assessments.data, studentIds, subjectIds],
@@ -144,7 +151,9 @@ function TeacherDetailPage() {
   const myAttendance = useMemo(
     () =>
       (attendance.data ?? []).filter(
-        (row) => studentIds.includes(row.student_id) && (row.subject_id === null || subjectIds.includes(row.subject_id)),
+        (row) =>
+          studentIds.includes(row.student_id) &&
+          (row.subject_id === null || subjectIds.includes(row.subject_id)),
       ),
     [attendance.data, studentIds, subjectIds],
   );
@@ -220,7 +229,11 @@ function TeacherDetailPage() {
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         <StatCard label="New students (7 days)" value={countSince(enrolments, 7)} icon={Users} />
         <StatCard label="New students (30 days)" value={countSince(enrolments, 30)} icon={Users} />
-        <StatCard label="New students (365 days)" value={countSince(enrolments, 365)} icon={Users} />
+        <StatCard
+          label="New students (365 days)"
+          value={countSince(enrolments, 365)}
+          icon={Users}
+        />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">

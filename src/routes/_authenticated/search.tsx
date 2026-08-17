@@ -57,9 +57,7 @@ interface Result {
 }
 
 function matches(term: string, values: (string | null | undefined)[]) {
-  return values
-    .filter(Boolean)
-    .some((value) => String(value).toLowerCase().includes(term));
+  return values.filter(Boolean).some((value) => String(value).toLowerCase().includes(term));
 }
 
 export function SearchScreen({ q }: { q: string }) {
@@ -189,7 +187,6 @@ export function SearchScreen({ q }: { q: string }) {
         });
       }
     }
-
 
     return out;
   }, [term, centers.data, profiles.data, students.data, teachers.data, grades.data, subjects.data]);

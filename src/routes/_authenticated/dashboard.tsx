@@ -1,12 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Activity,
-  BookOpen,
-  GraduationCap,
-  UserPlus,
-  Users,
-} from "lucide-react";
+import { Activity, BookOpen, GraduationCap, UserPlus, Users } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -132,7 +126,11 @@ function DashboardPage() {
                       <stop offset="100%" stopColor="var(--color-chart-1)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="var(--color-border)"
+                    vertical={false}
+                  />
                   <XAxis
                     dataKey="month"
                     stroke="var(--color-muted-foreground)"

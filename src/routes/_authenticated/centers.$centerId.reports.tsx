@@ -139,8 +139,7 @@ function ReportsPage() {
   };
   const subjectName = (id: string | null) =>
     (subjects.data ?? []).find((row) => row.id === id)?.name ?? "—";
-  const centerName = (id: string) =>
-    (centers.data ?? []).find((row) => row.id === id)?.name ?? "—";
+  const centerName = (id: string) => (centers.data ?? []).find((row) => row.id === id)?.name ?? "—";
 
   const rows = useMemo<Record<string, string | number>[]>(() => {
     switch (type) {
@@ -384,8 +383,8 @@ function ReportsPage() {
                         <ActionItem
                           onSelect={() => {
                             const saved =
-                              ((report.content as { rows?: Record<string, string | number>[] })
-                                ?.rows ?? []);
+                              (report.content as { rows?: Record<string, string | number>[] })
+                                ?.rows ?? [];
                             downloadFile(
                               `${report.title}.csv`,
                               toCsv(saved),

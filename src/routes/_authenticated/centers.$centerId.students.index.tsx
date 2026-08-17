@@ -49,7 +49,10 @@ export const Route = createFileRoute("/_authenticated/centers/$centerId/students
   head: () => ({
     meta: [
       { title: "Students — Center Management System" },
-      { name: "description", content: "Browse and search every student registered at your center." },
+      {
+        name: "description",
+        content: "Browse and search every student registered at your center.",
+      },
       { property: "og:title", content: "Students — Center Management System" },
       {
         property: "og:description",
@@ -129,8 +132,7 @@ function StudentsPage() {
 
   const gradeName = (id: string | null) =>
     grades.data?.find((grade) => grade.id === id)?.name ?? "—";
-  const centerName = (id: string) =>
-    centers.data?.find((center) => center.id === id)?.name ?? "—";
+  const centerName = (id: string) => centers.data?.find((center) => center.id === id)?.name ?? "—";
 
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -391,9 +393,7 @@ function StudentsPage() {
                           {fullName(student)}
                         </Link>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {student.email ?? "—"}
-                      </TableCell>
+                      <TableCell className="hidden md:table-cell">{student.email ?? "—"}</TableCell>
                       <TableCell className="hidden md:table-cell">
                         {gradeName(student.grade_id)}
                       </TableCell>
@@ -411,7 +411,10 @@ function StudentsPage() {
                       <TableCell className="text-right">
                         <RowActions>
                           <ActionItem asChild>
-                            <Link to="/centers/$centerId/students/$studentId" params={{ centerId, studentId: student.id }}>
+                            <Link
+                              to="/centers/$centerId/students/$studentId"
+                              params={{ centerId, studentId: student.id }}
+                            >
                               <Eye className="size-4" /> View details
                             </Link>
                           </ActionItem>

@@ -104,8 +104,7 @@ function TeachersPage() {
   // Assignments are teacher + grade + subject triples, edited inline with the teacher.
   const [pairs, setPairs] = useState<string[]>([]);
 
-  const centerName = (id: string) =>
-    centers.data?.find((center) => center.id === id)?.name ?? "—";
+  const centerName = (id: string) => centers.data?.find((center) => center.id === id)?.name ?? "—";
 
   const formCenter = form.center_id || defaultCenter;
 
@@ -293,9 +292,7 @@ function TeachersPage() {
                       <TableCell className="hidden md:table-cell">
                         {teacher.specialization ?? "—"}
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        {teacher.email ?? "—"}
-                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">{teacher.email ?? "—"}</TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {centerName(teacher.center_id)}
                       </TableCell>
@@ -313,7 +310,10 @@ function TeachersPage() {
                       <TableCell className="text-right">
                         <RowActions>
                           <ActionItem asChild>
-                            <Link to="/centers/$centerId/teachers/$teacherId" params={{ centerId, teacherId: teacher.id }}>
+                            <Link
+                              to="/centers/$centerId/teachers/$teacherId"
+                              params={{ centerId, teacherId: teacher.id }}
+                            >
                               <Eye className="size-4" /> View profile
                             </Link>
                           </ActionItem>
