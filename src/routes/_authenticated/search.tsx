@@ -44,7 +44,7 @@ export const Route = createFileRoute("/_authenticated/search")({
   },
 });
 
-type ResultKind = "Center" | "Student" | "Teacher" | "Class" | "Subject" | "Admin";
+type ResultKind = "Center" | "Student" | "Teacher" | "Grade" | "Subject" | "Admin";
 
 interface Result {
   id: string;
