@@ -156,7 +156,7 @@ function CenterProfilePage() {
           <TabsTrigger value="students">Students</TabsTrigger>
           <TabsTrigger value="teachers">Teachers</TabsTrigger>
           <TabsTrigger value="subjects">Subjects</TabsTrigger>
-          <TabsTrigger value="classes">Classes</TabsTrigger>
+          <TabsTrigger value="classes">Grades</TabsTrigger>
           <TabsTrigger value="attendance">Attendance</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -172,7 +172,7 @@ function CenterProfilePage() {
             />
             <StatCard label="Teachers" value={scoped.teachers.length} icon={GraduationCap} />
             <StatCard label="Subjects" value={scoped.subjects.length} icon={BookOpen} />
-            <StatCard label="Classes" value={scoped.grades.length} icon={LayoutGrid} />
+            <StatCard label="Grades" value={scoped.grades.length} icon={LayoutGrid} />
             <StatCard
               label="Attendance"
               value={attendanceRate === null ? "—" : `${attendanceRate}%`}
@@ -365,8 +365,8 @@ function CenterProfilePage() {
         <TabsContent value="classes">
           {scoped.grades.length === 0 ? (
             <EmptyState
-              title="No classes"
-              description="Grades and classes created for this center will appear here."
+              title="No grades"
+              description="Grades created for this center will appear here."
             />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

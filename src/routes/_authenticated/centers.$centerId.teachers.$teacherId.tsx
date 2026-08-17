@@ -94,12 +94,16 @@ function TeacherDetailPage() {
     [teacherSubjects.data, teacherId],
   );
 
+  // A student counts for this teacher when the enrolment matches one of the
+  // teacher's grade + subject assignments (or names the teacher explicitly).
   const enrolments = useMemo(
     () =>
       (studentSubjects.data ?? []).filter(
         (row) =>
           row.teacher_id === teacherId ||
-          links.some((link) => link.subject_id === row.subject_id),
+          links.some(
+            (link) => link.subject_id === row.subject_id && link.grade_id === row.grade_id,
+          ),
       ),
     [studentSubjects.data, links, teacherId],
   );
@@ -122,14 +126,9 @@ function TeacherDetailPage() {
   const classIds = useMemo(
     () =>
       Array.from(
-        new Set(
-          [
-            ...links.map((row) => row.grade_id),
-            ...myStudents.map((student) => student.grade_id),
-          ].filter((value): value is string => Boolean(value)),
-        ),
+        new Set(links.map((row) => row.grade_id).filter((value): value is string => Boolean(value))),
       ),
-    [links, myStudents],
+    [links],
   );
 
   const myAssessments = useMemo(
@@ -209,7 +208,7 @@ function TeacherDetailPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Students" value={myStudents.length} icon={Users} />
         <StatCard label="Subjects" value={subjectIds.length} icon={BookOpen} />
-        <StatCard label="Classes" value={classIds.length} icon={GraduationCap} />
+        <StatCard label="Grades" value={classIds.length} icon={GraduationCap} />
         <StatCard
           label="Average student score"
           value={average ?? "—"}
@@ -301,7 +300,7 @@ function TeacherDetailPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Student</TableHead>
-                      <TableHead className="hidden sm:table-cell">Class</TableHead>
+                      <TableHead className="hidden sm:table-cell">Grade</TableHead>
                       <TableHead className="text-right">Average</TableHead>
                     </TableRow>
                   </TableHeader>

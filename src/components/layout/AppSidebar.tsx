@@ -42,7 +42,7 @@ const CENTER_ITEMS = [
   { title: "Dashboard", url: "/centers/$centerId", icon: LayoutDashboard },
   { title: "Students", url: "/centers/$centerId/students", icon: Users },
   { title: "Teachers", url: "/centers/$centerId/teachers", icon: GraduationCap },
-  { title: "Subjects & Classes", url: "/centers/$centerId/subjects", icon: BookOpen },
+  { title: "Subjects & Grades", url: "/centers/$centerId/subjects", icon: BookOpen },
   { title: "Progress & Attendance", url: "/centers/$centerId/progress", icon: LineChart },
   { title: "Reports", url: "/centers/$centerId/reports", icon: FileBarChart },
   { title: "Search", url: "/centers/$centerId/search", icon: Search },
