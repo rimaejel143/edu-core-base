@@ -37,7 +37,10 @@ import {
   studentNotesQuery,
   studentQuery,
   studentSubjectsQuery,
+  subjectGradesQuery,
   subjectsQuery,
+  teacherSubjectsQuery,
+  teachersQuery,
 } from "@/lib/api";
 import { useCrud } from "@/lib/crud";
 import { BookOpen, FileText, GraduationCap, LineChart, StickyNote } from "lucide-react";
@@ -77,6 +80,9 @@ function StudentDetailPage() {
   const grades = useQuery(gradesQuery(scopeId));
   const centers = useQuery(centersQuery(scopeId));
   const enrolments = useQuery(studentSubjectsQuery(scopeId));
+  const subjectGrades = useQuery(subjectGradesQuery(scopeId));
+  const teachers = useQuery(teachersQuery(scopeId));
+  const assignments = useQuery(teacherSubjectsQuery(scopeId));
   const assessments = useQuery(assessmentsQuery(scopeId));
   const enrolCrud = useCrud("student_subjects", "Enrolment");
 
@@ -88,6 +94,7 @@ function StudentDetailPage() {
 
   const [open, setOpen] = useState(false);
   const [subjectId, setSubjectId] = useState("");
+  const [teacherId, setTeacherId] = useState("");
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteForm, setNoteForm] = useState({ note_type: "teacher", title: "", body: "" });
   const [docOpen, setDocOpen] = useState(false);
@@ -114,6 +121,10 @@ function StudentDetailPage() {
 
   const subjectName = (id: string | null) =>
     subjects.data?.find((subject) => subject.id === id)?.name ?? "—";
+  const teacherName = (id: string | null) => {
+    const teacher = teachers.data?.find((row) => row.id === id);
+    return teacher ? fullName(teacher) : "Unassigned";
+  };
 
   if (student.isLoading) {
     return <Skeleton className="h-64 w-full" />;
@@ -129,6 +140,28 @@ function StudentDetailPage() {
   const centerName = centers.data?.find((center) => center.id === record.center_id)?.name ?? "—";
   const average = averageScore(myAssessments);
 
+  // Only subjects taught in this student's grade can be enrolled.
+  const gradeSubjectIds = new Set<string>([
+    ...(subjectGrades.data ?? [])
+      .filter((row) => row.grade_id === record.grade_id)
+      .map((row) => row.subject_id),
+    ...(assignments.data ?? [])
+      .filter((row) => row.grade_id === record.grade_id)
+      .map((row) => row.subject_id),
+  ]);
+  const gradeSubjectOptions = (subjects.data ?? [])
+    .filter(
+      (subject) => subject.center_id === record.center_id && gradeSubjectIds.has(subject.id),
+    )
+    .map((subject) => ({ value: subject.id, label: subject.name }));
+  const teacherOptions = (assignments.data ?? [])
+    .filter((row) => row.subject_id === subjectId && row.grade_id === record.grade_id)
+    .map((row) => {
+      const teacher = teachers.data?.find((item) => item.id === row.teacher_id);
+      return teacher ? { value: teacher.id, label: fullName(teacher) } : null;
+    })
+    .filter((option): option is { value: string; label: string } => option !== null);
+
   const addEnrolment = async () => {
     if (!subjectId) return;
     const ok = await enrolCrud.create(
@@ -137,11 +170,13 @@ function StudentDetailPage() {
         student_id: record.id,
         subject_id: subjectId,
         grade_id: record.grade_id,
+        teacher_id: teacherId || null,
       },
       `${fullName(record)} enrolled in ${subjectName(subjectId)}`,
     );
     if (ok) {
       setSubjectId("");
+      setTeacherId("");
       setOpen(false);
     }
   };
@@ -247,7 +282,7 @@ function StudentDetailPage() {
                       <div>
                         <p className="text-sm font-medium">{subjectName(row.subject_id)}</p>
                         <p className="text-xs text-muted-foreground">
-                          Enrolled {formatDate(row.enrolled_at)}
+                          {teacherName(row.teacher_id)} · enrolled {formatDate(row.enrolled_at)}
                         </p>
                       </div>
                       <ConfirmDelete
@@ -498,13 +533,21 @@ function StudentDetailPage() {
               value={subjectId}
               onChange={setSubjectId}
               placeholder="Select subject"
-              options={(subjects.data ?? [])
-                .filter((subject) => subject.center_id === record.center_id)
-                .map((subject) => ({ value: subject.id, label: subject.name }))}
+              options={gradeSubjectOptions}
             />
           </Field>
-          <Field label="Grade / Class">
+          <Field label="Grade">
             <Input value={gradeName} readOnly />
+          </Field>
+          <Field label="Teacher">
+            <SelectField
+              value={teacherId}
+              onChange={setTeacherId}
+              placeholder="Select teacher"
+              allowEmpty
+              emptyLabel="Unassigned"
+              options={teacherOptions}
+            />
           </Field>
         </FieldGrid>
       </FormDialog>
