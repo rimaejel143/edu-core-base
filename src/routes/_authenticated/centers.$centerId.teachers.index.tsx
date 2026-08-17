@@ -188,7 +188,7 @@ function TeachersPage() {
     if (toAdd.length > 0) {
       await supabase.from("teacher_subjects").insert(
         toAdd.map((key) => {
-          const [gradeId, subjectId] = key.split(":");
+          const [gradeId, subjectId] = key.split(":") as [string, string];
           return {
             center_id: teacherCenter,
             teacher_id: teacherId,
